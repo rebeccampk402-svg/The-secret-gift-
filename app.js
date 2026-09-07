@@ -145,10 +145,62 @@ function render() {
   const generic = {
     audio: ["🎵", "Écoute bien…", "Cette partie sera reliée à ton audio/musique dans Supabase."],
     memories: ["📸", "Quelques souvenirs…", "Les photos et leurs petits textes seront chargés ici."],
-    message: ["❤️", "Something I Want You to Know", "Ton message personnel sera affiché ici."],
+    message: ["❤️", "Something I Want You to Know", ""],
     clue: ["🔐", "The Final Clue", "Ton dernier indice sera affiché ici."],
     reveal: ["🎁", "The Reveal", "La révélation finale sera affichée ici."]
   }[step.type];
+  if (step.type === "message") {
+  const messageLines = [
+    "Voilà une année qui finit et une autre qui commence…",
+    "Celle qui ne nous promet ni de beaux jours, ni de mauvais jours.",
+    "Elle nous promet seulement d'être là quand quelque chose de beau grandira, même au cœur des jours difficiles.",
+    "J'ai rêvé d'une histoire qui me ferait sourire et voyager à travers ton regard.",
+    "Mais celle-ci m'a appris que parfois, pleurer fait naître quelque chose de précieux dans nos cœurs.",
+    "Ce ne sont pas des larmes de chagrin… mais un rire du cœur qui se révèle sous mes yeux chargés d'inquiétude.",
+    "Ce n'est pas de la peur, mais l'espoir que je nourris que cette histoire ne s'arrête pas à un tour de soleil.",
+    "J'ai cherché partout quelqu'un de mieux que toi.",
+    "Je ne dirai pas ne pas l'avoir trouvé : je l'ai croisé. Et bien au-delà de ce à quoi je m'attendais.",
+    "Mais vois-tu… cette personne n'avait pas ton regard.",
+    "Elle n'avait pas ta façon de me dire que même dans le silence, tu serais là.",
+    "Un soir, une nuit, une amitié est née et continue de grandir…",
+    "Parce qu'il n'existe rien de plus beau que cela : un sentiment sincère.",
+    "Un nouveau jour où tout n'est pas parfait, mais court vers la perfection.",
+    "Chaque jour devient un éclat d'intention partagé.",
+    "En cette nouvelle traversée du temps, je ne te souhaite pas ce que mes mains ne peuvent offrir.",
+    "Je te souhaite une présence… celle qui demeure quand les instants deviennent inestimables.",
+    "Et cette présence, sans détour ni promesse vaine, est celle qui t'écrit aujourd'hui.",
+    "Simplement. ❤️"
+  ];
+
+  screen.innerHTML = `
+    <article class="step-card">
+      <div class="step-number">${String(current + 1).padStart(2, "0")} / ${steps.length}</div>
+      <div style="font-size:42px">❤️</div>
+      <h2>Something I Want You to Know</h2>
+      <div id="messageText"></div>
+      <div id="messageContinue"></div>
+    </article>
+  `;
+
+  let i = 0;
+
+  function showMessageLine() {
+    if (i < messageLines.length) {
+      const p = document.createElement("p");
+      p.className = "body-copy";
+      p.textContent = messageLines[i];
+      document.getElementById("messageText").appendChild(p);
+      i++;
+      setTimeout(showMessageLine, 5000);
+    } else {
+      document.getElementById("messageContinue").innerHTML =
+        `<button class="primary continue" onclick="nextStep()">Continuer →</button>`;
+    }
+  }
+
+  showMessageLine();
+  return;
+  }
 
   if (step.type === "reveal") {
     screen.innerHTML = `<div class="final">
