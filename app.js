@@ -114,8 +114,8 @@ function render() {
   const step = steps[current];
 
   if (step.type === "intro") {
-    screen.innerHTML = `
-      <div class="hero" style="text-align:center; padding-top:3rem;"><img src="Capture d’écran_20260907-192752_1.png" alt="Pour toi" style="width:85%; max-width:320px; display:block; margin:0 auto;"><br><br><button class="primary" onclick="nextStep()">✦ &nbsp; Commencer l’aventure &nbsp; →</button></div>
+    screen.innerHTML= 
+      <div class="hero" style="text-align:center; padding-top:3rem;"><img src="accueil.png" alt="Pour toi" style="width:85%; max-width:320px; display:block; margin:0 auto;"><br><br><button class="primary" onclick="nextStep()">✦ &nbsp; Commencer l’aventure &nbsp; →</button></div>
   if (step.type === "questions") {
     const q = step.questions[questionIndex];
     screen.innerHTML = `
