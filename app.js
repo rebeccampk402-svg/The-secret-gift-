@@ -115,11 +115,7 @@ function render() {
 
   if (step.type === "intro") {
     screen.innerHTML = `
-      <div class="hero">
-        <div class="eyebrow">Hey Garden</div>
-        <h1>Une surprise<br>t’attend…</h1>
-        <p class="lead">Quelqu’un a préparé quelque chose spécialement pour toi.<br>Mais pour le découvrir, tu devras avancer étape par étape…</p>
-        <div class="gift">
+      <div class="hero" style="text-align:center; padding-top:3rem;"><img src="Screenshot_20260907-192752_1.png" alt="Pour toi" style="width:80%; max-width:300px; display:block; margin:0 auto;"><br><br><button class="primary" onclick="nextStep()">✦   Commencer l’aventure   →</button></div>
   <img src="Screenshot_20260907-192752_1.png" alt="Pour toi">
 </div>
         <button class="primary" onclick="nextStep()">✦ &nbsp; Commencer l’aventure &nbsp; →</button>
