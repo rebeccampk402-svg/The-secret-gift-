@@ -120,9 +120,8 @@ function render() {
         <h1>Une surprise<br>t’attend…</h1>
         <p class="lead">Quelqu’un a préparé quelque chose spécialement pour toi.<br>Mais pour le découvrir, tu devras avancer étape par étape…</p>
         <div class="gift">
-          <div class="gift-box"></div>
-          <div class="gift-tag">Pour toi ♡</div>
-        </div>
+  <img src="Screenshot_20260907- 192752_1.png" alt="Pour toi">
+</div>
         <button class="primary" onclick="nextStep()">✦ &nbsp; Commencer l’aventure &nbsp; →</button>
       </div>`;
     return;
