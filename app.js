@@ -100,6 +100,8 @@ let questionIndex = 0;
 
 const screen = document.getElementById("screen");
 const progress = document.getElementById("progress");
+const music = new Audio("mixkit-fright-night-871.mp3");
+const humanMusic = new Audio("Christina Perri - Human [Official Video] [r5yaoMjaAmE].mp3");
 
 function renderProgress() {
   progress.innerHTML = steps.map((_, i) =>
@@ -149,7 +151,9 @@ function render() {
     clue: ["🔐", "The Final Clue", "Ton dernier indice sera affiché ici."],
     reveal: ["🎁", "The Reveal", "La révélation finale sera affichée ici."]
   }[step.type];
-  if (step.type === "message") {
+  if (step.type === "message") {  
+    humanMusic.currentTime = 0;
+  humanMusic.play().catch(() => {});
   const messageLines = [
     "Voilà une année qui finit et une autre qui commence…",
     "Celle qui ne nous promet ni de beaux jours, ni de mauvais jours.",
@@ -201,6 +205,7 @@ function render() {
   showMessageLine();
   return;
   }
+    humanMusic.pause();
 
   if (step.type === "reveal") {
     screen.innerHTML = `<div class="final">
