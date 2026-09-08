@@ -229,7 +229,6 @@ if (step.type === "intro") {
   showMessageLine();
   return;
   }
-    humanMusic.pause();
 
   if (step.type === "reveal") {
     screen.innerHTML = `<div class="final">
