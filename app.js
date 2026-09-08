@@ -100,7 +100,7 @@ let questionIndex = 0;
 
 const screen = document.getElementById("screen");
 const progress = document.getElementById("progress");
-const music = new Audio("ambiance.mp3");
+const music = new Audio("a.mp3");
 const humanMusic = new Audio("human.mp3");
 music.volume = 0.5;
 humanMusic.volume = 0.5;
