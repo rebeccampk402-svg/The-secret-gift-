@@ -134,7 +134,8 @@ if (step.type === "intro") {
         height: 100%;
         object-fit: contain;
       ">
-      <button class="primary" onclick="nextStep()" style="
+      <button class="primary" onclick="music.play(); nextStep()" style="
+      
         position: absolute;
         bottom: 12%;
         left: 50%;
