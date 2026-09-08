@@ -100,8 +100,10 @@ let questionIndex = 0;
 
 const screen = document.getElementById("screen");
 const progress = document.getElementById("progress");
-const music = new Audio("mixkit-fright-night-871.mp3");
-const humanMusic = new Audio("Christina Perri - Human [Official Video] [r5yaoMjaAmE].mp3");
+const music = new Audio("ambiance.mp3");
+const humanMusic = new Audio("human.mp3");
+music.volume = 0.5;
+humanMusic.volume = 0.5;
 
 function renderProgress() {
   progress.innerHTML = steps.map((_, i) =>
