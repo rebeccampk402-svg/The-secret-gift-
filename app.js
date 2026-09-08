@@ -113,17 +113,41 @@ function render() {
   renderProgress();
   const step = steps[current];
 
-
-      if (step.type === "intro") {
-    screen.innerHTML = `
-      <div class="hero" style="text-align:center; padding-top:3rem;">
-        <img src="accueil.png" alt="Pour toi" style="width:85%; max-width:320px; display:block; margin:0 auto;">
-        <br><br>
-        <button class="primary" onclick="nextStep()">✦ &nbsp; Commencer l’aventure &nbsp; →</button>
-      </div>
-    `;
-    return;
-    }
+if (step.type === "intro") {
+  screen.innerHTML = `
+    <div style="
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    ">
+      <img src="accueil.png" alt="Pour toi" style="
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      ">
+      <button class="primary" onclick="nextStep()" style="
+        position: absolute;
+        bottom: 12%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80%;
+        max-width: 280px;
+        z-index: 10;
+      ">
+        ✦ &nbsp; Commencer l’aventure &nbsp; →
+      </button>
+    </div>
+  `;
+  return;
+}
+  
     
   if (step.type === "questions") {
     const q = step.questions[questionIndex];
