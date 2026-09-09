@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>The Secret Gift</title>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <main id="app">
+
+    <!-- Écran de bienvenue -->
+    <section id="welcome-screen" class="screen">
+
+      <div class="card">
+
+        <div class="step-counter" id="step-counter">
+          00 / 09
+        </div>
+
+        <h1 id="welcome-title">
+          Bienvenue dans ta surprise ❤️
+        </h1>
+
+        <p id="welcome-text">
+          Une petite aventure t’attend… Prends ton temps,
+          ouvre bien les yeux et profite de chaque étape. ❤️
+        </p>
+
+        <button id="start-button" type="button">
+          Commencer ❤️
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <!-- Écran des étapes -->
+    <section id="surprise-screen" class="screen hidden">
+
+      <div class="card">
+
+        <div class="step-counter" id="current-step">
+          01 / 09
+        </div>
+
+        <h2 id="step-title"></h2>
+
+        <div id="step-content"></div>
+
+        <div id="question-container"></div>
+
+        <div id="feedback-container"></div>
+
+        <div id="media-container"></div>
+
+        <div id="navigation-container"></div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- Musique de fond -->
+  <audio id="background-music" loop preload="auto"></audio>
+
+  <!-- Audio de l'étape 4 : Christina Perri — Human -->
+  <audio id="christina-audio" controls preload="metadata"></audio>
+
+
+  <!-- Supabase JS doit être chargé AVANT app.js -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- JavaScript de l'application -->
+  <script src="app.js"></script>
+
+</body>
+</html>
