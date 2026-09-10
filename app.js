@@ -87,10 +87,10 @@ function showWelcome() {
 
 if (welcomeButton) {
   welcomeButton.addEventListener("click", async () => {
-    if (welcomeScreen) welcomeScreen.style.display = "none";
-    if (surpriseScreen) surpriseScreen.style.display = "block";
+  
 
-    try {
+if (welcomeScreen) welcomeScreen.classList.add("hidden");
+if (surpriseScreen) surpriseScreen.classList.remove("hidden");    try {
       await backgroundMusic.play();
     } catch (error) {
       console.warn("Lecture automatique bloquée :", error);
