@@ -1,38 +1,28 @@
 /* =========================================================
-   THE SECRET GIFT
-   Garden — Anniversaire
+   THE SECRET GIFT — Garden
+   9-step personalized surprise
    ========================================================= */
 
-const SUPABASE_URL =
-  "https://djujhfmusguvxqremdpp.supabase.co";
-
-const SUPABASE_KEY =
-  "sb_publishable_oJHpVpdT0-l_05ng5iTweQ_NZj5yuDg";
-
-const SURPRISE_ID =
-  "52889a77-b944-46e9-8a1a-d6f21dad11e8";
+const SUPABASE_URL = "https://djujhfmusguvxqremdpp.supabase.co";
+const SUPABASE_KEY = "sb_publishable_oJHpVpdT0-l_05ng5iTweQ_NZj5yuDg";
+const SURPRISE_ID = "52889a77-b944-46e9-8a1a-d6f21dad11e8";
 
 const BACKGROUND_MUSIC_URL =
   "https://djujhfmusguvxqremdpp.supabase.co/storage/v1/object/public/Media/mixkit-fright-night-871.mp3";
 
-const FALLBACK_CHRISTINA_URL =
+const CHRISTINA_MUSIC_URL =
   "https://djujhfmusguvxqremdpp.supabase.co/storage/v1/object/public/Media/Christina.mp3";
 
+const VIDEO_1_URL =
+  "https://djujhfmusguvxqremdpp.supabase.co/storage/v1/object/public/Media/VID-20260818-WA0024.mp4";
 
-/* =========================================================
-   SUPABASE
-   ========================================================= */
+const VIDEO_2_URL =
+  "https://djujhfmusguvxqremdpp.supabase.co/storage/v1/object/public/Media/VID-20260209-WA0001.mp4";
 
-const supabaseClient =
-  window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-  );
-
-
-/* =========================================================
-   VARIABLES
-   ========================================================= */
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 
 let steps = [];
 let questions = [];
@@ -41,75 +31,34 @@ let media = [];
 
 let currentStepIndex = 0;
 let totalSteps = 9;
+let stepTwoQuestionIndex = 0;
+let stepEightVideoIndex = 0;
+let pausedMusicTime = 0;
 
-let backgroundMusic = null;
-let christinaAudio = null;
+const welcomeScreen = document.getElementById("welcome-screen");
+const surpriseScreen = document.getElementById("surprise-screen");
+const welcomeTitle = document.getElementById("welcome-title");
+const welcomeText = document.getElementById("welcome-text");
+const startButton = document.getElementById("start-button");
 
+const stepNumber = document.getElementById("step-number");
+const stepTitle = document.getElementById("step-title");
+const stepBody = document.getElementById("step-body");
 
-/* =========================================================
-   ELEMENTS HTML
-   ========================================================= */
+const questionContainer = document.getElementById("question-container");
+const feedbackContainer = document.getElementById("feedback-container");
+const mediaContainer = document.getElementById("media-container");
+const actionContainer = document.getElementById("action-container");
 
-const welcomeScreen =
-  document.getElementById("welcome-screen");
+const backgroundMusic = document.getElementById("background-music");
+const christinaAudio = document.getElementById("christina-audio");
 
-const surpriseScreen =
-  document.getElementById("surprise-screen");
-
-const welcomeTitle =
-  document.getElementById("welcome-title");
-
-const welcomeText =
-  document.getElementById("welcome-text");
-
-const startButton =
-  document.getElementById("start-button");
-
-const currentStepCounter =
-  document.getElementById("step-number");
-
-const stepTitle =
-  document.getElementById("step-title");
-
-const stepBody =
-  document.getElementById("step-body");
-
-const questionContainer =
-  document.getElementById("question-container");
-
-const feedbackContainer =
-  document.getElementById("feedback-container");
-
-const mediaContainer =
-  document.getElementById("media-container");
-
-const actionContainer =
-  document.getElementById("action-container");
-
-backgroundMusic =
-  document.getElementById("background-music");
-
-christinaAudio =
-  document.getElementById("christina-audio");
+if (backgroundMusic) backgroundMusic.loop = true;
 
 
-/* =========================================================
-   INITIAL AUDIO CONFIGURATION
-   ========================================================= */
-
-if (backgroundMusic) {
-  backgroundMusic.loop = true;
-  backgroundMusic.preload = "auto";
-}
-
-if (christinaAudio) {
-  christinaAudio.preload = "metadata";
-}
-
-
-/* =========================================================
-   UTILITAIRES
-   ========================================================= */
+/* ---------------------------------------------------------
+   Helpers
+   --------------------------------------------------------- */
 
 function escapeHtml(value) {
   return String(value ?? "")
@@ -120,201 +69,109 @@ function escapeHtml(value) {
     .replaceAll("'", "&#039;");
 }
 
-
 function formatText(text) {
   return escapeHtml(text)
-    .replace(
-      /\*\*(.*?)\*\*/g,
-      "<strong>$1</strong>"
-    )
+    .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
     .replace(/\n/g, "<br>");
 }
 
-
-function clearStepAreas() {
-  if (stepBody) {
-    stepBody.innerHTML = "";
-  }
-
-  if (questionContainer) {
-    questionContainer.innerHTML = "";
-  }
-
-  if (feedbackContainer) {
-    feedbackContainer.innerHTML = "";
-  }
-
-  if (mediaContainer) {
-    mediaContainer.innerHTML = "";
-  }
-
-  if (actionContainer) {
-    actionContainer.innerHTML = "";
-  }
+function clearAreas() {
+  questionContainer.innerHTML = "";
+  feedbackContainer.innerHTML = "";
+  mediaContainer.innerHTML = "";
+  actionContainer.innerHTML = "";
 }
 
-
-function normalizeMediaType(type) {
-  return String(type || "")
-    .trim()
-    .toLowerCase();
+function normalizeType(value) {
+  return String(value || "").trim().toLowerCase();
 }
 
-
-function isImageMedia(item) {
-  const type =
-    normalizeMediaType(item.media_type);
-
-  return [
-    "image",
-    "photo",
-    "picture",
-    "img"
-  ].includes(type);
-}
-
-
-function isVideoMedia(item) {
-  const type =
-    normalizeMediaType(item.media_type);
-
-  return [
-    "video",
-    "mp4",
-    "movie"
-  ].includes(type);
-}
-
-
-function isAudioMedia(item) {
-  const type =
-    normalizeMediaType(item.media_type);
-
-  return [
-    "audio",
-    "mp3",
-    "music",
-    "sound"
-  ].includes(type);
-}
-
-
-/* =========================================================
-   MÉDIAS
-   ========================================================= */
-
-function getStepMedia(stepId) {
-  return media
-    .filter(
-      item => item.step_id === stepId
-    )
-    .sort((a, b) => {
-      const dateA =
-        new Date(
-          a.created_at || 0
-        ).getTime();
-
-      const dateB =
-        new Date(
-          b.created_at || 0
-        ).getTime();
-
-      return dateA - dateB;
-    });
-}
-
-
-/* =========================================================
-   QUESTIONS
-   ========================================================= */
-
-function getQuestionForStep(stepId) {
-  return questions.find(
-    question =>
-      question.step_id === stepId
+function isImage(item) {
+  return ["image", "photo", "picture", "img"].includes(
+    normalizeType(item.media_type)
   );
 }
 
+function isVideo(item) {
+  return ["video", "mp4", "movie"].includes(
+    normalizeType(item.media_type)
+  );
+}
 
-function getAnswersForQuestion(questionId) {
-  return answers
-    .filter(
-      answer =>
-        answer.question_id === questionId
-    )
+function isAudio(item) {
+  return ["audio", "mp3", "music", "sound"].includes(
+    normalizeType(item.media_type)
+  );
+}
+
+function getStepMedia(stepId) {
+  return media
+    .filter((item) => item.step_id === stepId)
     .sort((a, b) => {
-      const orderA =
-        Number(a.choice_order ?? 999);
+      const orderA = Number(a.media_order ?? a.display_order ?? 999);
+      const orderB = Number(b.media_order ?? b.display_order ?? 999);
 
-      const orderB =
-        Number(b.choice_order ?? 999);
+      if (orderA !== orderB) return orderA - orderB;
 
-      return orderA - orderB;
+      return (
+        new Date(a.created_at || 0).getTime() -
+        new Date(b.created_at || 0).getTime()
+      );
     });
 }
 
+function getQuestionsForStep(stepId) {
+  return questions
+    .filter((q) => q.step_id === stepId)
+    .sort((a, b) => {
+      const aOrder = Number(a.question_order ?? a.order ?? 999);
+      const bOrder = Number(b.question_order ?? b.order ?? 999);
 
-/* =========================================================
-   TRANSITIONS
-   ========================================================= */
+      if (aOrder !== bOrder) return aOrder - bOrder;
 
-function showTransition(
-  html,
-  buttonText,
-  callback
-) {
-  if (!actionContainer) {
-    return;
-  }
-
-  actionContainer.innerHTML = "";
-
-  if (html) {
-    const transition =
-      document.createElement("div");
-
-    transition.className =
-      "transition-text fade-in";
-
-    transition.innerHTML = html;
-
-    actionContainer.appendChild(
-      transition
-    );
-  }
-
-  if (buttonText && callback) {
-    const button =
-      document.createElement("button");
-
-    button.type = "button";
-    button.className =
-      "primary-button";
-
-    button.textContent =
-      buttonText;
-
-    button.addEventListener(
-      "click",
-      callback
-    );
-
-    actionContainer.appendChild(
-      button
-    );
-  }
+      return (
+        new Date(a.created_at || 0).getTime() -
+        new Date(b.created_at || 0).getTime()
+      );
+    });
 }
 
+function getAnswersForQuestion(questionId) {
+  return answers
+    .filter((a) => a.question_id === questionId)
+    .sort((a, b) => {
+      const aOrder = Number(a.choice_order ?? 999);
+      const bOrder = Number(b.choice_order ?? 999);
 
-/* =========================================================
-   ANIMATION
-   ========================================================= */
+      return aOrder - bOrder;
+    });
+}
+
+function addButton(text, handler, className = "primary-button") {
+  const button = document.createElement("button");
+
+  button.type = "button";
+  button.className = className;
+  button.textContent = text;
+
+  button.addEventListener("click", handler);
+
+  actionContainer.appendChild(button);
+
+  return button;
+}
+
+function setMessage(html, className = "message") {
+  const p = document.createElement("p");
+
+  p.className = className;
+  p.innerHTML = html;
+
+  return p;
+}
 
 function animateStepChange(callback) {
-  const card =
-    surpriseScreen
-      ? surpriseScreen.querySelector(".card")
-      : null;
+  const card = surpriseScreen.querySelector(".card");
 
   if (!card) {
     callback();
@@ -328,125 +185,85 @@ function animateStepChange(callback) {
     card.classList.remove("fade-out");
     callback();
     card.classList.add("fade-in");
-  }, 300);
+  }, 250);
 }
 
 
-/* =========================================================
-   MUSIQUE DE FOND
-   ========================================================= */
+/* ---------------------------------------------------------
+   Music
+   --------------------------------------------------------- */
 
 function startBackgroundMusic() {
-  if (!backgroundMusic) {
-    return;
-  }
+  if (!backgroundMusic) return;
 
   if (!backgroundMusic.src) {
-    backgroundMusic.src =
-      BACKGROUND_MUSIC_URL;
+    backgroundMusic.src = BACKGROUND_MUSIC_URL;
   }
 
   backgroundMusic.loop = true;
 
-  const promise =
-    backgroundMusic.play();
+  const promise = backgroundMusic.play();
 
-  if (
-    promise &&
-    typeof promise.catch === "function"
-  ) {
+  if (promise?.catch) {
     promise.catch(() => {});
   }
 }
 
-
 function pauseBackgroundMusic() {
-  if (!backgroundMusic) {
-    return;
-  }
+  if (!backgroundMusic) return;
 
+  pausedMusicTime = backgroundMusic.currentTime || 0;
   backgroundMusic.pause();
 }
 
-
 function resumeBackgroundMusic() {
-  if (!backgroundMusic) {
-    return;
-  }
+  if (!backgroundMusic || currentStepIndex >= totalSteps) return;
 
-  if (
-    currentStepIndex >= totalSteps
-  ) {
-    return;
-  }
+  try {
+    backgroundMusic.currentTime = pausedMusicTime;
+  } catch (_) {}
 
-  const promise =
-    backgroundMusic.play();
+  const promise = backgroundMusic.play();
 
-  if (
-    promise &&
-    typeof promise.catch === "function"
-  ) {
+  if (promise?.catch) {
     promise.catch(() => {});
   }
 }
 
 
-/* =========================================================
-   CHARGEMENT SUPABASE
-   ========================================================= */
+/* ---------------------------------------------------------
+   Supabase
+   --------------------------------------------------------- */
 
 async function loadAllData() {
-
-  /* ---------- SURPRISE ---------- */
-
-  const surpriseResult =
-    await supabaseClient
-      .from("surprises")
-      .select("*")
-      .eq("id", SURPRISE_ID)
-      .maybeSingle();
+  const surpriseResult = await supabaseClient
+    .from("surprises")
+    .select("*")
+    .eq("id", SURPRISE_ID)
+    .maybeSingle();
 
   if (surpriseResult.error) {
-    throw new Error(
-      "Impossible de charger la surprise : " +
-      surpriseResult.error.message
-    );
+    throw surpriseResult.error;
   }
 
   if (!surpriseResult.data) {
     throw new Error(
-      "La surprise Garden est introuvable."
+      "La surprise Garden est introuvable dans Supabase."
     );
   }
 
-
-  /* ---------- ÉTAPES ---------- */
-
-  const stepsResult =
-    await supabaseClient
-      .from("steps")
-      .select("*")
-      .eq(
-        "surprise_id",
-        SURPRISE_ID
-      )
-      .order(
-        "step_number",
-        {
-          ascending: true
-        }
-      );
+  const stepsResult = await supabaseClient
+    .from("steps")
+    .select("*")
+    .eq("surprise_id", SURPRISE_ID)
+    .order("step_number", { ascending: true });
 
   if (stepsResult.error) {
-    throw new Error(
-      "Impossible de charger les étapes : " +
-      stepsResult.error.message
-    );
+    throw stepsResult.error;
   }
 
-  steps =
-    stepsResult.data || [];
+  steps = stepsResult.data || [];
+  totalSteps = steps.length || 9;
 
   if (!steps.length) {
     throw new Error(
@@ -454,284 +271,169 @@ async function loadAllData() {
     );
   }
 
-  totalSteps =
-    steps.length;
+  const stepIds = steps.map((s) => s.id);
 
-
-  /* ---------- QUESTIONS ---------- */
-
-  const stepIds =
-    steps.map(step => step.id);
-
-  const questionsResult =
-    await supabaseClient
-      .from("questions")
-      .select("*")
-      .in(
-        "step_id",
-        stepIds
-      );
+  const questionsResult = await supabaseClient
+    .from("questions")
+    .select("*")
+    .in("step_id", stepIds);
 
   if (questionsResult.error) {
-    throw new Error(
-      "Impossible de charger les questions : " +
-      questionsResult.error.message
-    );
+    throw questionsResult.error;
   }
 
-  questions =
-    questionsResult.data || [];
+  questions = questionsResult.data || [];
 
-
-  /* ---------- RÉPONSES ---------- */
-
-  const questionIds =
-    questions.map(
-      question => question.id
-    );
+  const questionIds = questions.map((q) => q.id);
 
   if (questionIds.length) {
-
-    const answersResult =
-      await supabaseClient
-        .from("answer_choices")
-        .select("*")
-        .in(
-          "question_id",
-          questionIds
-        );
+    const answersResult = await supabaseClient
+      .from("answer_choices")
+      .select("*")
+      .in("question_id", questionIds);
 
     if (answersResult.error) {
-      throw new Error(
-        "Impossible de charger les réponses : " +
-        answersResult.error.message
-      );
+      throw answersResult.error;
     }
 
-    answers =
-      answersResult.data || [];
-
+    answers = answersResult.data || [];
   } else {
     answers = [];
   }
 
-
-  /* ---------- MÉDIAS ---------- */
-
-  const mediaResult =
-    await supabaseClient
-      .from("media")
-      .select("*")
-      .in(
-        "step_id",
-        stepIds
-      )
-      .order(
-        "created_at",
-        {
-          ascending: true
-        }
-      );
+  const mediaResult = await supabaseClient
+    .from("media")
+    .select("*")
+    .in("step_id", stepIds)
+    .order("created_at", { ascending: true });
 
   if (mediaResult.error) {
-    throw new Error(
-      "Impossible de charger les médias : " +
-      mediaResult.error.message
-    );
+    throw mediaResult.error;
   }
 
-  media =
-    mediaResult.data || [];
-
-
-  /* ---------- MUSIQUE DE FOND ---------- */
+  media = mediaResult.data || [];
 
   if (backgroundMusic) {
-    backgroundMusic.src =
-      BACKGROUND_MUSIC_URL;
-
+    backgroundMusic.src = BACKGROUND_MUSIC_URL;
     backgroundMusic.load();
   }
 
+  const stepFour = steps.find(
+    (s) => Number(s.step_number) === 4
+  );
 
-  /* ---------- CHRISTINA ---------- */
+  const christina = stepFour
+    ? getStepMedia(stepFour.id).find(isAudio)
+    : null;
 
-  const stepFour =
-    steps.find(
-      step =>
-        Number(step.step_number) === 4
-    );
-
-  if (stepFour && christinaAudio) {
-
-    const audioMedia =
-      getStepMedia(
-        stepFour.id
-      ).find(isAudioMedia);
-
+  if (christinaAudio) {
     christinaAudio.src =
-      audioMedia?.media_url ||
-      FALLBACK_CHRISTINA_URL;
+      christina?.media_url || CHRISTINA_MUSIC_URL;
 
+    christinaAudio.preload = "metadata";
+    christinaAudio.style.display = "none";
     christinaAudio.load();
   }
 }
 
-
-/* =========================================================
-   PROGRESSION
-   ========================================================= */
-
-async function saveProgress(
-  stepNumber
-) {
+async function saveProgress(number) {
   try {
+    const existing = await supabaseClient
+      .from("progress")
+      .select("id")
+      .eq("surprise", SURPRISE_ID)
+      .maybeSingle();
 
-    const existing =
-      await supabaseClient
-        .from("progress")
-        .select("id")
-        .eq(
-          "surprise_id",
-          SURPRISE_ID
-        )
-        .maybeSingle();
-
-    if (existing.error) {
-      return;
-    }
+    if (existing.error) return;
 
     const payload = {
-      surprise_id: SURPRISE_ID,
-      current_step: stepNumber,
-      updated_at:
-        new Date().toISOString()
+      surprise: SURPRISE_ID,
+      current_step: number,
+      updated_at: new Date().toISOString()
     };
 
     if (existing.data?.id) {
-
       await supabaseClient
         .from("progress")
         .update(payload)
-        .eq(
-          "id",
-          existing.data.id
-        );
-
+        .eq("id", existing.data.id);
     } else {
-
       await supabaseClient
         .from("progress")
         .insert(payload);
     }
-
-  } catch (error) {
-
-    console.warn(
-      "Progression non enregistrée :",
-      error
-    );
-  }
+  } catch (_) {}
 }
 
 
-/* =========================================================
-   BOUTON COMMENCER
-   ========================================================= */
+/* ---------------------------------------------------------
+   Welcome
+   --------------------------------------------------------- */
 
-if (startButton) {
+function showWelcome() {
+  welcomeScreen.classList.remove("hidden");
+  surpriseScreen.classList.add("hidden");
 
-  startButton.addEventListener(
-    "click",
-    async () => {
+  startButton.classList.remove("hidden");
 
-      startBackgroundMusic();
+  welcomeTitle.textContent =
+    "Bienvenue dans ta surprise ❤️";
 
-      if (welcomeScreen) {
-        welcomeScreen.classList.add(
-          "hidden"
-        );
-      }
-
-      if (surpriseScreen) {
-        surpriseScreen.classList.remove(
-          "hidden"
-        );
-      }
-
-      currentStepIndex = 0;
-
-      await renderCurrentStep();
-    }
-  );
+  welcomeText.textContent =
+    "Une petite aventure t’attend… Prends ton temps, ouvre bien les yeux et profite de chaque étape. ❤️";
 }
 
+startButton.addEventListener("click", async () => {
+  currentStepIndex = 0;
+  stepTwoQuestionIndex = 0;
+  stepEightVideoIndex = 0;
 
-/* =========================================================
-   AFFICHAGE DE L'ÉTAPE ACTUELLE
-   ========================================================= */
+  welcomeScreen.classList.add("hidden");
+  surpriseScreen.classList.remove("hidden");
+
+  startBackgroundMusic();
+
+  await renderCurrentStep();
+});
+
+
+/* ---------------------------------------------------------
+   Main renderer
+   --------------------------------------------------------- */
 
 async function renderCurrentStep() {
+  clearAreas();
 
-  clearStepAreas();
-
-  const step =
-    steps[currentStepIndex];
+  const step = steps[currentStepIndex];
 
   if (!step) {
     finishSurprise();
     return;
   }
 
-  const stepNumber =
-    Number(
-      step.step_number ||
-      currentStepIndex + 1
-    );
+  const number = Number(
+    step.step_number || currentStepIndex + 1
+  );
 
+  stepNumber.textContent =
+    String(number).padStart(2, "0") +
+    " / " +
+    String(totalSteps).padStart(2, "0");
 
-  /* ---------- COMPTEUR ---------- */
+  stepTitle.textContent = step.title || "";
 
-  if (currentStepCounter) {
-    currentStepCounter.textContent =
-      String(stepNumber).padStart(2, "0") +
-      " / " +
-      String(totalSteps).padStart(2, "0");
-  }
-
-
-  /* ---------- TITRE ---------- */
-
-  if (stepTitle) {
-    stepTitle.textContent =
-      step.title || "";
-  }
-
-
-  /* ---------- CORPS ---------- */
-
-  if (
-    stepBody &&
-    step.body_text
-  ) {
+  if (step.body_text) {
     stepBody.innerHTML =
       '<p class="message">' +
       formatText(step.body_text) +
       "</p>";
+  } else {
+    stepBody.innerHTML = "";
   }
 
+  await saveProgress(number);
 
-  /* ---------- PROGRESSION ---------- */
-
-  await saveProgress(
-    stepNumber
-  );
-
-
-  /* ---------- ROUTAGE ---------- */
-
-  switch (stepNumber) {
-
+  switch (number) {
     case 1:
       renderStepOne();
       break;
@@ -770,1314 +472,965 @@ async function renderCurrentStep() {
 
     default:
       renderGenericStep(step);
-      break;
   }
 }
-
-
-/* =========================================================
-   PASSER À L'ÉTAPE SUIVANTE
-   ========================================================= */
 
 function goToNextStep() {
+  animateStepChange(async () => {
+    currentStepIndex += 1;
 
-  animateStepChange(
-    async () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
 
-      currentStepIndex++;
-
-      if (
-        currentStepIndex >=
-        steps.length
-      ) {
-        finishSurprise();
-        return;
-      }
-
+    if (currentStepIndex >= steps.length) {
+      finishSurprise();
+    } else {
       await renderCurrentStep();
     }
-  );
+  });
 }
-
-
-/* =========================================================
-   FIN
-   ========================================================= */
 
 function finishSurprise() {
-
   pauseBackgroundMusic();
 
   if (christinaAudio) {
     christinaAudio.pause();
   }
 
-  currentStepIndex =
-    steps.length;
-
-  clearStepAreas();
-
-  if (currentStepCounter) {
-    currentStepCounter.textContent =
-      String(totalSteps).padStart(2, "0") +
-      " / " +
-      String(totalSteps).padStart(2, "0");
-  }
-
-  if (stepTitle) {
-    stepTitle.textContent =
-      "Fin de la surprise ❤️";
-  }
-
-  if (stepBody) {
-    stepBody.innerHTML =
-      '<p class="final-message">' +
-      "Merci d’avoir vécu cette petite aventure jusqu’au bout. ❤️" +
-      "</p>";
-  }
-}
-/* =========================================================
-   ÉTAPE 1
-   ========================================================= */
+  currentStepIndex = steps.length;
+                            }
+/* ---------------------------------------------------------
+   ÉTAPE 1 — Bienvenue
+   --------------------------------------------------------- */
 
 function renderStepOne() {
+  stepBody.innerHTML = `
+    <p class="message">
+      Quand tu es prêt…<br>
+      la surprise peut commencer. ✨
+    </p>
+  `;
 
-  showTransition(
-    "Quand tu es prêt…<br>" +
-    "la surprise peut commencer. ✨",
-    "Continuer ❤️",
-    goToNextStep
-  );
+  addButton("Continuer ❤️", async () => {
+    await goToNextStep();
+  });
 }
 
 
-/* =========================================================
-   ÉTAPE 2
-   A BLAST FROM THE PAST
-   ========================================================= */
-
-const stepTwoCaptions = [
-
-  "Certains souvenirs commencent simplement…",
-
-  "Puis on découvre peu à peu les différentes facettes d’une personne.",
-
-  "Et certains moments restent surtout pour le sourire qu’ils nous laissent. ❤️",
-
-  "Parce que les souvenirs les plus simples peuvent parfois devenir les plus précieux.",
-
-  "Et puis il y a ces moments qu’on n’oublie pas…"
-];
-
+/* ---------------------------------------------------------
+   ÉTAPE 2 — A Blast from the Past
+   --------------------------------------------------------- */
 
 function renderStepTwo(step) {
+  const stepQuestions = getQuestionsForStep(step.id);
 
-  const photos =
-    getStepMedia(step.id)
-      .filter(isImageMedia);
+  /*
+     La phrase de transition apparaît d'abord,
+     avant les 5 questions.
+  */
 
-  let photoIndex = 0;
-
-
-  function showPhoto() {
-
-    if (mediaContainer) {
-      mediaContainer.innerHTML =
-        "";
-    }
-
-    if (actionContainer) {
-      actionContainer.innerHTML =
-        "";
-    }
-
-
-    if (!photos[photoIndex]) {
-      showStepTwoQuestion();
-      return;
-    }
-
-
-    const item =
-      photos[photoIndex];
-
-
-    const block =
-      document.createElement("div");
-
-    block.className =
-      "media-block fade-in";
-
-
-    const image =
-      document.createElement("img");
-
-    image.src =
-      item.media_url;
-
-    image.alt =
-      "Souvenir " +
-      (photoIndex + 1);
-
-    image.loading =
-      "eager";
-
-
-    const caption =
-      document.createElement("p");
-
-    caption.className =
-      "caption";
-
-    caption.textContent =
-      stepTwoCaptions[
-        photoIndex
-      ] ||
-      item.caption ||
-      "";
-
-
-    block.appendChild(image);
-    block.appendChild(caption);
-
-
-    if (mediaContainer) {
-      mediaContainer.appendChild(
-        block
-      );
-    }
-
-
-    const button =
-      document.createElement("button");
-
-    button.type =
-      "button";
-
-    button.className =
-      "primary-button";
-
-    button.textContent =
-      photoIndex ===
-      photos.length - 1
-        ? "Continuer ❤️"
-        : "Continuer";
-
-
-    button.addEventListener(
-      "click",
-      () => {
-
-        photoIndex++;
-
-        showPhoto();
-      }
-    );
-
-
-    if (actionContainer) {
-      actionContainer.appendChild(
-        button
-      );
-    }
+  if (stepTwoQuestionIndex === -1) {
+    renderStepTwoIntro(stepQuestions);
+    return;
   }
 
+  if (
+    stepTwoQuestionIndex >= 0 &&
+    stepTwoQuestionIndex < stepQuestions.length
+  ) {
+    renderStepTwoQuestion(
+      stepQuestions[stepTwoQuestionIndex],
+      stepQuestions
+    );
+    return;
+  }
 
-  if (!photos.length) {
+  /*
+     Si aucune question n'a été trouvée dans Supabase,
+     on affiche quand même un message explicite.
+  */
 
-    showStepTwoQuestion();
+  if (!stepQuestions.length) {
+    questionContainer.innerHTML = `
+      <div class="error-message">
+        Les questions de cette étape n'ont pas encore été trouvées.
+      </div>
+    `;
 
+    return;
+  }
+}
+
+
+function renderStepTwoIntro(stepQuestions) {
+  stepBody.innerHTML = `
+    <p class="message">
+      Remonte dans tes souvenirs et découvre la première partie
+      de ta surprise. ❤️
+    </p>
+
+    <div class="transition-text">
+      <strong>Mais est-ce que tu te souviens vraiment ? 👀</strong>
+      <br>
+      Voyons ça…
+    </div>
+  `;
+
+  addButton("Commencer ❤️", () => {
+    stepTwoQuestionIndex = 0;
+    renderCurrentStep();
+  });
+}
+
+
+function renderStepTwoQuestion(question, allQuestions) {
+  const choices = getAnswersForQuestion(question.id);
+
+  questionContainer.innerHTML = "";
+
+  const questionElement = document.createElement("div");
+  questionElement.className = "question";
+
+  questionElement.innerHTML =
+    "<strong>" +
+    formatText(question.question_text || "") +
+    "</strong>";
+
+  questionContainer.appendChild(questionElement);
+
+  if (!choices.length) {
+    questionContainer.innerHTML += `
+      <div class="error-message">
+        Les réponses de cette question ne sont pas disponibles.
+      </div>
+    `;
+    return;
+  }
+
+  choices.forEach((choice) => {
+    const button = document.createElement("button");
+
+    button.type = "button";
+    button.className = "choice-button";
+
+    button.textContent = choice.choice_text || "";
+
+    button.addEventListener("click", () => {
+      handleAnswer(choice, allQuestions);
+    });
+
+    questionContainer.appendChild(button);
+  });
+}
+
+
+function handleAnswer(choice, allQuestions) {
+  const buttons =
+    questionContainer.querySelectorAll("button");
+
+  buttons.forEach((button) => {
+    button.disabled = true;
+  });
+
+  const isCorrect = Boolean(choice.is_correct);
+
+  feedbackContainer.innerHTML = `
+    <div class="feedback ${isCorrect ? "correct" : "wrong"}">
+      ${formatText(
+        choice.feedback ||
+        (isCorrect
+          ? "✨ Bonne réponse ! ❤️"
+          : "Hmm… pas encore. 👀")
+      )}
+    </div>
+  `;
+
+  if (isCorrect) {
+    if (
+      stepTwoQuestionIndex <
+      allQuestions.length - 1
+    ) {
+      addButton("Question suivante ❤️", () => {
+        stepTwoQuestionIndex += 1;
+        renderCurrentStep();
+      });
+    } else {
+      addButton("Continuer ❤️", async () => {
+        await goToNextStep();
+      });
+    }
   } else {
-
-    showPhoto();
+    addButton("Réessayer 👀", () => {
+      renderCurrentStep();
+    }, "secondary-button");
   }
 }
 
 
-/* =========================================================
-   QUESTION ÉTAPE 2
-   ========================================================= */
-
-function showStepTwoQuestion() {
-
-  if (mediaContainer) {
-    mediaContainer.innerHTML =
-      "";
-  }
-
-  if (actionContainer) {
-    actionContainer.innerHTML =
-      "";
-  }
-
-
-  const transition =
-    document.createElement("div");
-
-  transition.className =
-    "transition-text fade-in";
-
-  transition.innerHTML =
-    "Mais est-ce que tu te souviens vraiment ? 👀<br>" +
-    "Voyons ça…";
-
-
-  if (actionContainer) {
-    actionContainer.appendChild(
-      transition
-    );
-  }
-
-
-  const step =
-    steps[currentStepIndex];
-
-  if (!step) {
-    return;
-  }
-
-
-  const question =
-    getQuestionForStep(
-      step.id
-    );
-
-
-  if (!question) {
-
-    const button =
-      document.createElement("button");
-
-    button.type =
-      "button";
-
-    button.textContent =
-      "Continuer ❤️";
-
-    button.addEventListener(
-      "click",
-      goToNextStep
-    );
-
-    if (actionContainer) {
-      actionContainer.appendChild(
-        button
-      );
-    }
-
-    return;
-  }
-
-
-  renderQuestion(question);
-}
-
-
-/* =========================================================
-   ÉTAPE 3
-   A LITTLE CHALLENGE
-   ========================================================= */
+/* ---------------------------------------------------------
+   ÉTAPE 3 — A Little Challenge
+   --------------------------------------------------------- */
 
 function renderStepThree(step) {
+  stepBody.innerHTML = `
+    <p class="message">
+      Un petit défi t’attend… Réfléchis bien,
+      la réponse se cache peut-être dans les indices. 👀❤️
+    </p>
 
-  const question =
-    getQuestionForStep(
-      step.id
-    );
+    <div class="transition-text">
+      Je suis un mot qui peut désigner quelque chose
+      que l’on imagine les yeux fermés…<br><br>
 
+      Je peux être un désir, un espoir, une vision de ce que
+      l’on aimerait voir devenir réel.<br><br>
 
-  if (!question) {
+      Je peux sembler lointain, mais il suffit parfois d’y croire
+      pour commencer à s’en rapprocher.<br><br>
 
-    showTransition(
-      "Le défi est terminé. 🌙✨",
-      "Continuer ❤️",
-      goToNextStep
-    );
+      Je suis un petit mot venu d’une autre langue,
+      mais entre nous, il signifie bien plus qu’une simple traduction. ❤️<br><br>
 
+      <strong>Qui suis-je ?</strong>
+    </div>
+  `;
+
+  const stepQuestions = getQuestionsForStep(step.id);
+
+  if (!stepQuestions.length) {
+    questionContainer.innerHTML = `
+      <div class="error-message">
+        La question de cette étape n'a pas été trouvée.
+      </div>
+    `;
     return;
   }
 
+  const question = stepQuestions[0];
+  const choices = getAnswersForQuestion(question.id);
 
-  renderQuestion(question);
-}
+  const questionElement = document.createElement("div");
+  questionElement.className = "question";
 
+  questionElement.innerHTML =
+    "<strong>" +
+    formatText(question.question_text || "") +
+    "</strong>";
 
-/* =========================================================
-   AFFICHAGE DES QUESTIONS
-   ========================================================= */
+  questionContainer.appendChild(questionElement);
 
-function renderQuestion(question) {
+  choices.forEach((choice) => {
+    const button = document.createElement("button");
 
-  const choices =
-    getAnswersForQuestion(
-      question.id
-    );
+    button.type = "button";
+    button.className = "choice-button";
+    button.textContent = choice.choice_text || "";
 
+    button.addEventListener("click", () => {
+      buttonsDisabled(questionContainer);
 
-  if (questionContainer) {
+      feedbackContainer.innerHTML = `
+        <div class="feedback ${
+          choice.is_correct ? "correct" : "wrong"
+        }">
+          ${formatText(
+            choice.feedback ||
+            (
+              choice.is_correct
+                ? "✨ Tu l’as trouvé… ❤️"
+                : "Hmm… pas encore. 👀"
+            )
+          )}
+        </div>
+      `;
 
-    questionContainer.innerHTML =
-      '<div class="question">' +
-      "<strong>" +
-      formatText(
-        question.question_text
-      ) +
-      "</strong>" +
-      "</div>";
-  }
-
-
-  choices.forEach(
-    answer => {
-
-      const button =
-        document.createElement(
-          "button"
-        );
-
-      button.type =
-        "button";
-
-      button.className =
-        "choice-button";
-
-      button.textContent =
-        answer.choice_text;
-
-
-      button.addEventListener(
-        "click",
-        () => {
-
-          handleAnswer(
-            question,
-            answer
-          );
-        }
-      );
-
-
-      if (questionContainer) {
-        questionContainer.appendChild(
-          button
+      if (choice.is_correct) {
+        addButton("Continuer ❤️", async () => {
+          await goToNextStep();
+        });
+      } else {
+        addButton(
+          "Réessayer 👀",
+          () => renderCurrentStep(),
+          "secondary-button"
         );
       }
-    }
-  );
+    });
+
+    questionContainer.appendChild(button);
+  });
 }
 
 
-/* =========================================================
-   RÉPONSE À UNE QUESTION
-   ========================================================= */
-
-function handleAnswer(
-  question,
-  selectedAnswer
-) {
-
-  const buttons =
-    questionContainer
-      ? Array.from(
-          questionContainer.querySelectorAll(
-            ".choice-button"
-          )
-        )
-      : [];
-
-
-  buttons.forEach(
-    button => {
-      button.disabled =
-        true;
-    }
-  );
-
-
-  if (feedbackContainer) {
-
-    feedbackContainer.innerHTML =
-      '<div class="feedback fade-in">' +
-      formatText(
-        selectedAnswer.feedback ||
-        ""
-      ) +
-      "</div>";
-  }
-
-
-  if (
-    selectedAnswer.is_correct
-  ) {
-
-    if (actionContainer) {
-      actionContainer.innerHTML =
-        "";
-    }
-
-
-    const continueButton =
-      document.createElement(
-        "button"
-      );
-
-    continueButton.type =
-      "button";
-
-    continueButton.className =
-      "primary-button";
-
-    continueButton.textContent =
-      "Continuer ❤️";
-
-
-    continueButton.addEventListener(
-      "click",
-      goToNextStep
-    );
-
-
-    if (actionContainer) {
-      actionContainer.appendChild(
-        continueButton
-      );
-    }
-
-  } else {
-
-    if (actionContainer) {
-      actionContainer.innerHTML =
-        "";
-    }
-
-
-    const retryButton =
-      document.createElement(
-        "button"
-      );
-
-    retryButton.type =
-      "button";
-
-    retryButton.className =
-      "primary-button";
-
-    retryButton.textContent =
-      "Réessayer";
-
-
-    retryButton.addEventListener(
-      "click",
-      () => {
-
-        if (feedbackContainer) {
-          feedbackContainer.innerHTML =
-            "";
-        }
-
-        if (actionContainer) {
-          actionContainer.innerHTML =
-            "";
-        }
-
-        renderQuestion(
-          question
-        );
-      }
-    );
-
-
-    if (actionContainer) {
-      actionContainer.appendChild(
-        retryButton
-      );
-    }
-  }
+function buttonsDisabled(container) {
+  container
+    .querySelectorAll("button")
+    .forEach((button) => {
+      button.disabled = true;
+    });
 }
 
 
-/* =========================================================
-   ÉTAPE 4
-   ÉCOUTE BIEN…
-   ========================================================= */
+/* ---------------------------------------------------------
+   ÉTAPE 4 — Écoute bien…
+   --------------------------------------------------------- */
 
 function renderStepFour(step) {
-
   pauseBackgroundMusic();
 
+  stepBody.innerHTML = `
+    <p class="message">
+      Cette fois, pas d’énigme. Juste un moment pour écouter
+      et laisser la musique parler. ❤️
+    </p>
+  `;
 
-  const audioMedia =
-    getStepMedia(step.id)
-      .find(isAudioMedia);
+  const before = document.createElement("div");
 
+  before.className = "transition-text";
 
-  if (
-    christinaAudio &&
-    audioMedia &&
-    audioMedia.media_url
-  ) {
+  before.innerHTML = `
+    Cette fois, pas d’énigme. 🎧<br>
+    Juste un moment pour écouter… et laisser la musique parler. ❤️<br><br>
 
-    christinaAudio.src =
-      audioMedia.media_url;
+    Mets-toi à l’aise, écoute bien jusqu’au bout.
+    Peut-être que tu comprendras pourquoi j’ai choisi
+    cette chanson pour toi. ✨
+  `;
 
-    christinaAudio.load();
+  mediaContainer.appendChild(before);
+
+  if (!christinaAudio) {
+    renderStepFourFallback();
+    return;
   }
 
+  christinaAudio.src = CHRISTINA_MUSIC_URL;
+  christinaAudio.controls = true;
+  christinaAudio.style.display = "block";
 
-  if (mediaContainer) {
-    mediaContainer.innerHTML =
-      "";
-  }
+  const audioWrapper = document.createElement("div");
+  audioWrapper.className = "media-block";
 
-  if (actionContainer) {
-    actionContainer.innerHTML =
-      "";
-  }
+  audioWrapper.appendChild(christinaAudio);
+  mediaContainer.appendChild(audioWrapper);
 
+  const after = document.createElement("div");
 
-  const beforeText =
-    document.createElement("p");
+  after.className = "transition-text";
 
-  beforeText.className =
-    "message";
+  after.innerHTML = `
+    <strong>Alors… qu’est-ce que cette chanson t’a fait ressentir ? ❤️</strong><br><br>
 
-  beforeText.innerHTML =
-    "Cette fois, pas d’énigme. 🎧<br>" +
-    "Juste un moment pour écouter… et laisser la musique parler. ❤️<br>" +
-    "Mets-toi à l’aise, écoute bien jusqu’au bout. Peut-être que tu comprendras pourquoi j’ai choisi cette chanson pour toi. ✨";
+    Certaines choses sont difficiles à expliquer avec des mots.
+    Parfois, une chanson peut simplement dire ce qu’on n’arrive
+    pas à dire soi-même. 🎧❤️<br><br>
 
+    Mais ne t’arrête pas là…<br>
+    <strong>La suite t’attend. 👀</strong>
+  `;
 
-  if (mediaContainer) {
-    mediaContainer.appendChild(
-      beforeText
-    );
-  }
+  mediaContainer.appendChild(after);
 
+  const continueButton = document.createElement("button");
 
-  if (
-    christinaAudio &&
-    christinaAudio.src
-  ) {
+  continueButton.type = "button";
+  continueButton.className = "primary-button";
+  continueButton.textContent = "Continuer ❤️";
+  continueButton.disabled = true;
 
-    const block =
-      document.createElement(
-        "div"
-      );
+  actionContainer.appendChild(continueButton);
 
-    block.className =
-      "media-block";
+  let finished = false;
 
+  const finishAudio = async () => {
+    if (finished) return;
 
-    block.appendChild(
-      christinaAudio
-    );
+    finished = true;
 
+    christinaAudio.pause();
 
-    if (mediaContainer) {
-      mediaContainer.appendChild(
-        block
-      );
-    }
+    resumeBackgroundMusic();
 
+    continueButton.disabled = false;
 
-    christinaAudio.onended =
-      () => {
+    continueButton.onclick = async () => {
+      await goToNextStep();
+    };
+  };
 
-        showAfterChristina();
-      };
-
-
-    christinaAudio
-      .play()
-      .catch(() => {});
-
-
-    /* -----------------------------------------------------
-       BOUTON DE SECOURS
-       Certains navigateurs mobiles peuvent empêcher
-       l'événement audio de fonctionner comme prévu.
-       ----------------------------------------------------- */
-
-    const manualButton =
-      document.createElement(
-        "button"
-      );
-
-    manualButton.type =
-      "button";
-
-    manualButton.className =
-      "secondary-button";
-
-    manualButton.textContent =
-      "Continuer après l’écoute ❤️";
-
-
-    manualButton.addEventListener(
-      "click",
-      () => {
-
-        showAfterChristina();
-      }
-    );
-
-
-    if (actionContainer) {
-      actionContainer.appendChild(
-        manualButton
-      );
-    }
-
-  } else {
-
-    if (mediaContainer) {
-
-      mediaContainer.innerHTML +=
-        '<p class="error-message">' +
-        "Le fichier Christina.mp3 n’a pas pu être chargé." +
-        "</p>";
-    }
-
-
-    showAfterChristina();
-  }
-}
-
-
-/* =========================================================
-   APRÈS CHRISTINA
-   ========================================================= */
-
-function showAfterChristina() {
-
-  if (christinaAudio) {
-    christinaAudio.onended =
-      null;
-  }
-
-
-  if (mediaContainer) {
-
-    const afterText =
-      document.createElement("p");
-
-    afterText.className =
-      "message fade-in";
-
-    afterText.innerHTML =
-      "Alors… qu’est-ce que cette chanson t’a fait ressentir ? ❤️<br>" +
-      "Certaines choses sont difficiles à expliquer avec des mots.<br>" +
-      "Parfois, une chanson peut simplement dire ce qu’on n’arrive pas à dire soi-même. 🎧❤️<br>" +
-      "Mais ne t’arrête pas là…<br>" +
-      "<strong>La suite t’attend. 👀</strong>";
-
-
-    mediaContainer.appendChild(
-      afterText
-    );
-  }
-
-
-  if (actionContainer) {
-    actionContainer.innerHTML =
-      "";
-  }
-
-
-  const button =
-    document.createElement(
-      "button"
-    );
-
-  button.type =
-    "button";
-
-  button.className =
-    "primary-button";
-
-  button.textContent =
-    "Continuer ❤️";
-
-
-  button.addEventListener(
-    "click",
-    () => {
-
-      resumeBackgroundMusic();
-
-      goToNextStep();
-    }
+  christinaAudio.addEventListener(
+    "ended",
+    finishAudio,
+    { once: true }
   );
 
+  christinaAudio.addEventListener(
+    "error",
+    () => {
+      continueButton.disabled = false;
+      continueButton.onclick = async () => {
+        resumeBackgroundMusic();
+        await goToNextStep();
+      };
+    },
+    { once: true }
+  );
 
-  if (actionContainer) {
-    actionContainer.appendChild(
-      button
-    );
+  const playPromise = christinaAudio.play();
+
+  if (playPromise?.catch) {
+    playPromise.catch(() => {
+      /*
+         Le navigateur peut empêcher la lecture automatique.
+         Le contrôle audio reste visible pour Garden.
+      */
+      continueButton.disabled = false;
+
+      continueButton.onclick = async () => {
+        christinaAudio.pause();
+        resumeBackgroundMusic();
+        await goToNextStep();
+      };
+    });
   }
-
-
-  resumeBackgroundMusic();
 }
 
 
-/* =========================================================
-   ÉTAPE 5
-   UN MESSAGE POUR TOI ❤️
-   ========================================================= */
+function renderStepFourFallback() {
+  mediaContainer.innerHTML += `
+    <div class="error-message">
+      Impossible de charger Christina.mp3.
+    </div>
+  `;
+
+  addButton("Continuer ❤️", async () => {
+    resumeBackgroundMusic();
+    await goToNextStep();
+  });
+}
+
+
+/* ---------------------------------------------------------
+   ÉTAPE 5 — Un message pour toi ❤️
+   --------------------------------------------------------- */
 
 function renderStepFive() {
+  stepBody.innerHTML = `
+    <p class="message">
+      Après les souvenirs, le défi et la musique,
+      quelques mots que je voulais spécialement te laisser. ❤️
+    </p>
 
-  if (!stepBody) {
-    return;
-  }
+    <div class="final-message">
+      Après les souvenirs, le défi et la musique…<br><br>
 
+      J’avais encore quelques mots que je voulais spécialement te laisser. ❤️<br><br>
 
-  stepBody.innerHTML =
-    '<p class="message">' +
+      Il y a des personnes qui passent simplement dans notre vie.<br>
+      Et puis il y a celles qui, sans forcément le savoir,
+      finissent par y laisser une petite trace. ✨<br><br>
 
-    "Après les souvenirs, le défi et la musique…<br>" +
-    "J’avais encore quelques mots que je voulais spécialement te laisser. ❤️<br><br>" +
+      Tu fais partie de ces personnes.<br><br>
 
-    "Il y a des personnes qui passent simplement dans notre vie.<br>" +
-    "Et puis il y a celles qui, sans forcément le savoir, finissent par y laisser une petite trace. ✨<br><br>" +
+      Je ne vais pas tout t’expliquer maintenant…<br>
+      Parce qu’il reste encore quelques petites choses à découvrir. 👀❤️<br><br>
 
-    "Tu fais partie de ces personnes.<br><br>" +
+      Alors garde encore un peu de patience.<br>
+      <strong>La suite arrive…</strong> ✨
+    </div>
+  `;
 
-    "Je ne vais pas tout t’expliquer maintenant…<br>" +
-    "Parce qu’il reste encore quelques petites choses à découvrir. 👀❤️<br><br>" +
-
-    "Alors garde encore un peu de patience.<br>" +
-    "<strong>La suite arrive… ✨</strong>" +
-
-    "</p>";
-
-
-  showTransition(
-    "",
-    "Continuer ❤️",
-    goToNextStep
-  );
+  addButton("Continuer ❤️", async () => {
+    await goToNextStep();
+  });
 }
 
 
-/* =========================================================
-   ÉTAPE 6
-   QUELQUES MOTS POUR TOI ❤️
-   ========================================================= */
+/* ---------------------------------------------------------
+   ÉTAPE 6 — Quelques mots pour toi ❤️
+   --------------------------------------------------------- */
 
 function renderStepSix() {
+  stepBody.innerHTML = `
+    <p class="message">
+      Il y a encore quelque chose que j’aimerais te faire découvrir…
+      Prends encore un instant. ✨
+    </p>
 
-  if (!stepBody) {
-    return;
-  }
+    <div class="final-message">
+      Après les souvenirs, le défi et la musique…<br><br>
 
+      J’avais encore quelques mots que je voulais spécialement te laisser. ❤️<br><br>
 
-  stepBody.innerHTML =
-    '<p class="message">' +
+      Il y a des personnes qui passent simplement dans notre vie.<br>
+      Et puis il y a celles qui, sans forcément le savoir,<br>
+      finissent par y laisser une petite trace. ✨<br><br>
 
-    "Après les souvenirs, le défi et la musique…<br>" +
-    "J’avais encore quelques mots que je voulais spécialement te laisser. ❤️<br><br>" +
+      Tu fais partie de ces personnes.<br><br>
 
-    "Il y a des personnes qui passent simplement dans notre vie.<br>" +
-    "Et puis il y a celles qui, sans forcément le savoir,<br>" +
-    "finissent par y laisser une petite trace. ✨<br><br>" +
+      Je ne vais pas tout t’expliquer maintenant…<br>
+      Parce qu’il reste encore quelques petites choses à découvrir. 👀❤️<br><br>
 
-    "Tu fais partie de ces personnes.<br><br>" +
+      Alors garde encore un peu de patience.<br>
+      La suite arrive… ✨
+    </div>
+  `;
 
-    "Je ne vais pas tout t’expliquer maintenant…<br>" +
-    "Parce qu’il reste encore quelques petites choses à découvrir. 👀❤️<br><br>" +
-
-    "Alors garde encore un peu de patience.<br>" +
-    "La suite arrive… ✨" +
-
-    "</p>";
-
-
-  showTransition(
-    "",
-    "Continuer ❤️",
-    goToNextStep
-  );
-      }
-/* =========================================================
-   ÉTAPE 7
-   DERNIER DÉFI AVANT LA SURPRISE
-   ========================================================= */
+  addButton("Continuer ❤️", async () => {
+    await goToNextStep();
+  });
+}
+/* ---------------------------------------------------------
+   ÉTAPE 7 — The Final Clue
+   --------------------------------------------------------- */
 
 function renderStepSeven(step) {
+  stepBody.innerHTML = `
+    <p class="message">
+      Un dernier indice avant de découvrir qui se cache
+      derrière cette aventure. Réfléchis bien… ❤️
+    </p>
+  `;
 
-  const question =
-    getQuestionForStep(
-      step.id
-    );
+  const stepQuestions = getQuestionsForStep(step.id);
 
-
-  if (!question) {
-
-    showTransition(
-      "Un dernier indice avant la surprise… ❤️",
-      "Continuer ❤️",
-      goToNextStep
-    );
-
+  if (!stepQuestions.length) {
+    questionContainer.innerHTML = `
+      <div class="error-message">
+        La question de cette étape n'a pas été trouvée.
+      </div>
+    `;
     return;
   }
 
+  const question = stepQuestions[0];
+  const choices = getAnswersForQuestion(question.id);
 
-  renderQuestion(question);
+  const questionElement = document.createElement("div");
+  questionElement.className = "question";
+
+  questionElement.innerHTML =
+    "<strong>" +
+    formatText(
+      question.question_text ||
+      "Qui penses-tu être derrière tout ça ?"
+    ) +
+    "</strong>";
+
+  questionContainer.appendChild(questionElement);
+
+  choices.forEach((choice) => {
+    const button = document.createElement("button");
+
+    button.type = "button";
+    button.className = "choice-button";
+    button.textContent = choice.choice_text || "";
+
+    button.addEventListener("click", () => {
+      buttonsDisabled(questionContainer);
+
+      feedbackContainer.innerHTML = `
+        <div class="feedback ${
+          choice.is_correct ? "correct" : "wrong"
+        }">
+          ${formatText(
+            choice.feedback ||
+            (
+              choice.is_correct
+                ? "👀 Alors… tu avais deviné ? Oui. ❤️"
+                : "Hmm… tu es sûr de ton choix ? 👀"
+            )
+          )}
+        </div>
+      `;
+
+      if (choice.is_correct) {
+        addButton("Continuer ❤️", async () => {
+          await goToNextStep();
+        });
+      } else {
+        addButton(
+          "Réessayer 👀",
+          () => renderCurrentStep(),
+          "secondary-button"
+        );
+      }
+    });
+
+    questionContainer.appendChild(button);
+  });
 }
 
 
-/* =========================================================
-   ÉTAPE 8
-   JOYEUX ANNIVERSAIRE, GARDEN !
-   ========================================================= */
+/* ---------------------------------------------------------
+   ÉTAPE 8 — Joyeux anniversaire, Garden ! 🎉❤️
+   --------------------------------------------------------- */
 
 function renderStepEight(step) {
-
-  const videos =
-    getStepMedia(step.id)
-      .filter(isVideoMedia);
-
-  let videoIndex = 0;
-
-
-  function showVideo() {
-
-    if (mediaContainer) {
-      mediaContainer.innerHTML =
-        "";
-    }
-
-    if (actionContainer) {
-      actionContainer.innerHTML =
-        "";
-    }
-
-
-    if (!videos[videoIndex]) {
-      showStepEightEnding();
-      return;
-    }
-
-
-    /* -----------------------------------------------------
-       PREMIÈRE VIDÉO
-       ----------------------------------------------------- */
-
-    if (videoIndex === 0) {
-
-      const before =
-        document.createElement(
-          "p"
-        );
-
-      before.className =
-        "message";
-
-      before.innerHTML =
-        "Tu es arrivé jusqu’ici…<br>" +
-        "Alors cette fois, je ne vais pas te poser de question.<br>" +
-        "Je veux simplement te laisser regarder. ❤️<br><br>" +
-        "🎬 <strong>Un petit souvenir…</strong><br>" +
-        "Regarde bien. 👀";
-
-
-      if (mediaContainer) {
-        mediaContainer.appendChild(
-          before
-        );
-      }
-
-
-    /* -----------------------------------------------------
-       DEUXIÈME VIDÉO
-       ----------------------------------------------------- */
-
-    } else {
-
-      const transition =
-        document.createElement(
-          "div"
-        );
-
-      transition.className =
-        "transition-text fade-in";
-
-      transition.innerHTML =
-        "Et maintenant…<br><br>" +
-        "Il y a une autre vidéo que je voulais absolument te montrer.<br>" +
-        "Parce que celle-ci me rappelle quelque chose de particulier.<br>" +
-        "Un moment que je n’ai pas oublié. ❤️";
-
-
-      if (mediaContainer) {
-        mediaContainer.appendChild(
-          transition
-        );
-      }
-    }
-
-
-    const item =
-      videos[videoIndex];
-
-
-    const block =
-      document.createElement(
-        "div"
-      );
-
-    block.className =
-      "media-block fade-in";
-
-
-    const video =
-      document.createElement(
-        "video"
-      );
-
-    video.src =
-      item.media_url;
-
-    video.controls =
-      true;
-
-    video.playsInline =
-      true;
-
-    video.preload =
-      "metadata";
-
-
-    block.appendChild(
-      video
-    );
-
-
-    if (mediaContainer) {
-      mediaContainer.appendChild(
-        block
-      );
-    }
-
-
-    const button =
-      document.createElement(
-        "button"
-      );
-
-    button.type =
-      "button";
-
-    button.className =
-      "primary-button";
-
-    button.textContent =
-      videoIndex ===
-      videos.length - 1
-        ? "Continuer ❤️"
-        : "Continuer";
-
-
-    button.addEventListener(
-      "click",
-      () => {
-
-        videoIndex++;
-
-
-        if (
-          videoIndex <
-          videos.length
-        ) {
-
-          showVideo();
-
-        } else {
-
-          showStepEightEnding();
-        }
-      }
-    );
-
-
-    if (actionContainer) {
-      actionContainer.appendChild(
-        button
-      );
-    }
-  }
-
-
-  /* -------------------------------------------------------
-     FIN DE L'ÉTAPE 8
-     ------------------------------------------------------- */
-
-  function showStepEightEnding() {
-
-    if (mediaContainer) {
-      mediaContainer.innerHTML =
-        "";
-    }
-
-    if (actionContainer) {
-      actionContainer.innerHTML =
-        "";
-    }
-
-
-    const ending =
-      document.createElement(
-        "p"
-      );
-
-    ending.className =
-      "message fade-in";
-
-    ending.innerHTML =
-      "Tu m’avais dit quelque chose d’important dans cette vidéo.<br>" +
-      "Et aujourd’hui, à mon tour, j’avais envie de te rappeler une chose :<br>" +
-      "<strong>tu comptes. ❤️</strong><br><br>" +
-
-      "Peut-être que tu ne comprends pas encore pourquoi j’ai choisi tous ces petits détails pour cette surprise…<br>" +
-      "Mais bientôt, tout prendra son sens. ✨<br><br>" +
-
-      "Alors garde encore un peu de patience.<br>" +
-      "<strong>Il reste une dernière étape. 👀❤️</strong>";
-
-
-    if (mediaContainer) {
-      mediaContainer.appendChild(
-        ending
-      );
-    }
-
-
-    const button =
-      document.createElement(
-        "button"
-      );
-
-    button.type =
-      "button";
-
-    button.className =
-      "primary-button";
-
-    button.textContent =
-      "Continuer ❤️";
-
-
-    button.addEventListener(
-      "click",
-      goToNextStep
-    );
-
-
-    if (actionContainer) {
-      actionContainer.appendChild(
-        button
-      );
-    }
-  }
-
-
-  if (!videos.length) {
-
-    showStepEightEnding();
-
-  } else {
-
-    showVideo();
-  }
+  stepEightVideoIndex = 0;
+
+  stepBody.innerHTML = `
+    <p class="message">
+      Tu es arrivé jusqu’ici…
+      Alors cette fois, je veux simplement te laisser regarder. ❤️
+    </p>
+  `;
+
+  renderFirstVideo();
 }
 
 
-/* =========================================================
-   ÉTAPE 9
-   RÉVÉLATION FINALE
-   ========================================================= */
+function renderFirstVideo() {
+  mediaContainer.innerHTML = "";
+  actionContainer.innerHTML = "";
 
-function renderStepNine() {
+  const intro = document.createElement("div");
 
-  pauseBackgroundMusic();
+  intro.className = "transition-text";
 
+  intro.innerHTML = `
+    Tu es arrivé jusqu’ici…<br>
+    Alors cette fois, je ne vais pas te poser de question.<br>
+    Je veux simplement te laisser regarder. ❤️<br><br>
 
-  if (stepBody) {
+    🎬 <strong>Un petit souvenir…</strong><br>
+    Regarde bien. 👀
+  `;
 
-    stepBody.innerHTML =
-      '<p class="final-message">' +
+  mediaContainer.appendChild(intro);
 
-      "Alors…<br>" +
-      "Tu as trouvé les indices.<br>" +
-      "Tu as traversé les souvenirs.<br>" +
-      "Tu as relevé le défi.<br>" +
-      "Tu as écouté.<br>" +
-      "Tu as regardé.<br>" +
-      "Et maintenant, tu sais qui se cachait derrière tout ça. ❤️<br><br>" +
+  const wrapper = document.createElement("div");
+  wrapper.className = "media-block";
 
-      "<strong>C’était moi. Rebecca.</strong><br><br>" +
+  const video = document.createElement("video");
 
-      "Mais au fond, cette surprise n’a jamais été seulement une façon de te souhaiter un joyeux anniversaire.<br>" +
-      "Je voulais créer quelque chose que tu pourrais découvrir petit à petit.<br>" +
-      "Quelque chose qui te ferait sourire, réfléchir, peut-être même te rappeler certains moments. ✨<br><br>" +
+  video.controls = true;
+  video.playsInline = true;
+  video.preload = "metadata";
+  video.src = VIDEO_1_URL;
 
-      "Et si tu te demandes encore pourquoi j’ai choisi le mot <strong>« Sueño »</strong>…<br>" +
+  wrapper.appendChild(video);
+  mediaContainer.appendChild(wrapper);
 
-      "C’est parce qu’un sueño, c’est un rêve.<br>" +
-      "Quelque chose que l’on imagine, que l’on espère, que l’on aimerait voir devenir réel.<br>" +
-      "Et parfois, certains rêves commencent simplement par une rencontre, un souvenir, une personne qui prend une place particulière dans notre histoire. ❤️<br><br>" +
+  video.addEventListener("ended", () => {
+    renderVideoTransition();
+  });
 
-      "Alors aujourd’hui, pour tes <strong>22 ans</strong>…<br>" +
-      "Je voulais simplement te dire :<br>" +
-
-      "<strong>Joyeux anniversaire, Garden. 🎂❤️</strong><br><br>" +
-
-      "J’espère que cette nouvelle année de ta vie sera remplie de beaux rêves, de belles rencontres, de réussite et de moments que tu n’oublieras jamais.<br>" +
-      "Et surtout…<br>" +
-
-      "<strong>n’arrête jamais de rêver.</strong> 🌙✨<br><br>" +
-
-      "Parce qu’on ne sait jamais jusqu’où un simple <strong>sueño</strong> peut nous mener.<br><br>" +
-
-      "❤️ <strong>Fin de la surprise.</strong>" +
-
-      "</p>";
-  }
-
-
-  if (actionContainer) {
-    actionContainer.innerHTML =
-      "";
-  }
-
-
-  if (christinaAudio) {
-    christinaAudio.pause();
-  }
-
-
-  /* La musique de fond reste arrêtée
-     jusqu'à la fin de la surprise. */
-  pauseBackgroundMusic();
+  addButton("Continuer ❤️", () => {
+    video.pause();
+    renderVideoTransition();
+  });
 }
 
 
-/* =========================================================
-   ÉTAPE GÉNÉRIQUE
-   ========================================================= */
+function renderVideoTransition() {
+  mediaContainer.innerHTML = "";
+  actionContainer.innerHTML = "";
 
-function renderGenericStep(step) {
+  const transition = document.createElement("div");
 
-  const question =
-    getQuestionForStep(
-      step.id
-    );
+  transition.className = "transition-text";
+
+  transition.innerHTML = `
+    <strong>Et maintenant…</strong><br><br>
+
+    Il y a une autre vidéo que je voulais absolument te montrer.<br>
+    Parce que celle-ci me rappelle quelque chose de particulier.<br>
+    Un moment que je n’ai pas oublié. ❤️
+  `;
+
+  mediaContainer.appendChild(transition);
+
+  addButton("Voir la suite 🎬", () => {
+    renderSecondVideo();
+  });
+}
 
 
-  if (question) {
+function renderSecondVideo() {
+  mediaContainer.innerHTML = "";
+  actionContainer.innerHTML = "";
 
-    renderQuestion(
-      question
-    );
+  const wrapper = document.createElement("div");
+  wrapper.className = "media-block";
 
+  const video = document.createElement("video");
+
+  video.controls = true;
+  video.playsInline = true;
+  video.preload = "metadata";
+  video.src = VIDEO_2_URL;
+
+  wrapper.appendChild(video);
+  mediaContainer.appendChild(wrapper);
+
+  const afterMessage = document.createElement("div");
+
+  afterMessage.className = "transition-text";
+
+  afterMessage.innerHTML = `
+    Tu m’avais dit quelque chose d’important dans cette vidéo.<br><br>
+
+    Et aujourd’hui, à mon tour, j’avais envie de te rappeler une chose :<br>
+    <strong>tu comptes. ❤️</strong><br><br>
+
+    Peut-être que tu ne comprends pas encore pourquoi j’ai choisi
+    tous ces petits détails pour cette surprise…<br>
+    Mais bientôt, tout prendra son sens. ✨<br><br>
+
+    Alors garde encore un peu de patience.<br>
+    <strong>Il reste une dernière étape. 👀❤️</strong>
+  `;
+
+  mediaContainer.appendChild(afterMessage);
+
+  video.addEventListener("ended", () => {
+    addFinalVideoButton();
+  });
+
+  addFinalVideoButton();
+}
+
+
+function addFinalVideoButton() {
+  if (
+    actionContainer.querySelector(
+      '[data-final-video-button="true"]'
+    )
+  ) {
     return;
   }
 
+  const button = document.createElement("button");
 
-  showTransition(
-    "",
-    "Continuer ❤️",
-    goToNextStep
-  );
+  button.type = "button";
+  button.className = "primary-button";
+  button.dataset.finalVideoButton = "true";
+  button.textContent = "Continuer ❤️";
+
+  button.addEventListener("click", async () => {
+    await goToNextStep();
+  });
+
+  actionContainer.appendChild(button);
 }
 
 
-/* =========================================================
-   MESSAGE D'ERREUR
-   ========================================================= */
+/* ---------------------------------------------------------
+   ÉTAPE 9 — Enfin… tu sais qui je suis ❤️
+   --------------------------------------------------------- */
 
-function showLoadingError(message) {
+function renderStepNine() {
+  pauseBackgroundMusic();
 
+  stepBody.innerHTML = `
+    <p class="message">
+      La dernière étape de cette aventure…
+      Celle où tous les petits détails vont enfin prendre leur sens. ❤️
+    </p>
+
+    <div class="final-message">
+
+      Alors…<br><br>
+
+      Tu as trouvé les indices.<br>
+      Tu as traversé les souvenirs.<br>
+      Tu as relevé le défi.<br>
+      Tu as écouté.<br>
+      Tu as regardé.<br>
+      Et maintenant, tu sais qui se cachait derrière tout ça. ❤️<br><br>
+
+      <strong>C’était moi. Rebecca.</strong><br><br>
+
+      Mais au fond, cette surprise n’a jamais été seulement
+      une façon de te souhaiter un joyeux anniversaire.<br><br>
+
+      Je voulais créer quelque chose que tu pourrais découvrir
+      petit à petit.<br>
+      Quelque chose qui te ferait sourire, réfléchir,
+      peut-être même te rappeler certains moments. ✨<br><br>
+
+      Et si tu te demandes encore pourquoi j’ai choisi le mot
+      <strong>« Sueño »</strong>…<br><br>
+
+      C’est parce qu’un sueño, c’est un rêve.<br>
+      Quelque chose que l’on imagine, que l’on espère,
+      que l’on aimerait voir devenir réel.<br><br>
+
+      Et parfois, certains rêves commencent simplement par
+      une rencontre, un souvenir, une personne qui prend une
+      place particulière dans notre histoire. ❤️<br><br>
+
+      Alors aujourd’hui, pour tes <strong>22 ans</strong>…<br><br>
+
+      Je voulais simplement te dire :<br>
+      <strong>Joyeux anniversaire, Garden. 🎂❤️</strong><br><br>
+
+      J’espère que cette nouvelle année de ta vie sera remplie
+      de beaux rêves, de belles rencontres, de réussite et de
+      moments que tu n’oublieras jamais.<br><br>
+
+      Et surtout…<br>
+      <strong>n’arrête jamais de rêver. 🌙✨</strong><br><br>
+
+      Parce qu’on ne sait jamais jusqu’où un simple
+      <strong>sueño</strong> peut nous mener.<br><br>
+
+      ❤️ <strong>Fin de la surprise.</strong>
+    </div>
+  `;
+
+  actionContainer.innerHTML = `
+    <div class="transition-text">
+      🌙✨
+    </div>
+  `;
+}
+
+
+/* ---------------------------------------------------------
+   Étape générique — sécurité
+   --------------------------------------------------------- */
+
+function renderGenericStep(step) {
+  if (step.body_text) {
+    stepBody.innerHTML = `
+      <p class="message">
+        ${formatText(step.body_text)}
+      </p>
+    `;
+  }
+
+  const stepMedia = getStepMedia(step.id);
+
+  stepMedia.forEach((item) => {
+    renderMediaItem(item);
+  });
+
+  addButton("Continuer ❤️", async () => {
+    await goToNextStep();
+  });
+}
+
+
+/* ---------------------------------------------------------
+   Affichage média Supabase
+   --------------------------------------------------------- */
+
+function renderMediaItem(item) {
+  if (!item.media_url) return;
+
+  const wrapper = document.createElement("div");
+
+  wrapper.className = "media-block";
+
+  if (isImage(item)) {
+    const image = document.createElement("img");
+
+    image.src = item.media_url;
+    image.alt = item.caption || "Souvenir";
+
+    wrapper.appendChild(image);
+
+    if (item.caption) {
+      const caption = document.createElement("p");
+
+      caption.className = "caption";
+      caption.textContent = item.caption;
+
+      wrapper.appendChild(caption);
+    }
+  }
+
+  else if (isVideo(item)) {
+    const video = document.createElement("video");
+
+    video.src = item.media_url;
+    video.controls = true;
+    video.playsInline = true;
+    video.preload = "metadata";
+
+    wrapper.appendChild(video);
+
+    if (item.caption) {
+      const caption = document.createElement("p");
+
+      caption.className = "caption";
+      caption.textContent = item.caption;
+
+      wrapper.appendChild(caption);
+    }
+  }
+
+  else if (isAudio(item)) {
+    const audio = document.createElement("audio");
+
+    audio.src = item.media_url;
+    audio.controls = true;
+    audio.preload = "metadata";
+
+    wrapper.appendChild(audio);
+
+    if (item.caption) {
+      const caption = document.createElement("p");
+
+      caption.className = "caption";
+      caption.textContent = item.caption;
+
+      wrapper.appendChild(caption);
+    }
+  }
+
+  if (wrapper.children.length) {
+    mediaContainer.appendChild(wrapper);
+  }
+}
+
+
+/* ---------------------------------------------------------
+   Gestion des erreurs
+   --------------------------------------------------------- */
+
+function showError(message) {
   if (welcomeScreen) {
-    welcomeScreen.classList.remove(
-      "hidden"
-    );
+    welcomeScreen.classList.remove("hidden");
   }
 
   if (surpriseScreen) {
-    surpriseScreen.classList.add(
-      "hidden"
-    );
+    surpriseScreen.classList.add("hidden");
   }
-
-
-  if (welcomeTitle) {
-    welcomeTitle.textContent =
-      "Oups… ❤️";
-  }
-
 
   if (welcomeText) {
-    welcomeText.innerHTML =
-      '<div class="error-message">' +
-      escapeHtml(message) +
-      "</div>";
-  }
-
-
-  if (startButton) {
-    startButton.classList.add(
-      "hidden"
-    );
+    welcomeText.innerHTML = `
+      <span class="error-message">
+        ${escapeHtml(message)}
+      </span>
+    `;
   }
 }
 
 
-/* =========================================================
-   INITIALISATION
-   ========================================================= */
+/* ---------------------------------------------------------
+   Initialisation
+   --------------------------------------------------------- */
 
-(async function init() {
-
+document.addEventListener("DOMContentLoaded", async () => {
   try {
-
     await loadAllData();
 
-
-    if (welcomeTitle) {
-      welcomeTitle.textContent =
-        "Bienvenue dans ta surprise ❤️";
-    }
-
-
-    if (welcomeText) {
-      welcomeText.textContent =
-        "Une petite aventure t’attend… Prends ton temps, ouvre bien les yeux et profite de chaque étape. ❤️";
-    }
-
-
-    if (startButton) {
-      startButton.classList.remove(
-        "hidden"
-      );
-    }
-
+    showWelcome();
 
   } catch (error) {
-
     console.error(
-      "Erreur The Secret Gift :",
+      "Erreur lors du chargement de la surprise :",
       error
     );
 
-
-    showLoadingError(
-      error.message ||
-      "Impossible de charger la surprise."
+    showError(
+      "Oups… Impossible de charger la surprise. Réessayer ❤️"
     );
   }
-
-})();
+});
