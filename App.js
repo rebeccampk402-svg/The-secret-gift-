@@ -1,3 +1,4 @@
+alert("JavaScript fonctionne !");
 const SUPABASE_URL = "https://djujhfmusguvxqremdpp.supabase.co";
 const SUPABASE_KEY = "sb_publishable_oJHpVpdT0-l_05ng5iTweQ_NZj5yuDg";
 const SURPRISE_ID = "52889a77-b944-46e9-8a1a-d6f21dad11e8";
