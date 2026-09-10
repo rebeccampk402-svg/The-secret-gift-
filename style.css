@@ -1,3 +1,7 @@
+/* ================================
+   THE SECRET GIFT — STYLE
+   ================================ */
+
 * {
   box-sizing: border-box;
 }
@@ -5,119 +9,236 @@
 html,
 body {
   margin: 0;
-  min-height: 100%;
+  padding: 0;
   width: 100%;
+  min-height: 100%;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   min-height: 100vh;
+  width: 100%;
+
   font-family: Georgia, "Times New Roman", serif;
   color: #f7f3ea;
+
   background:
-    linear-gradient(rgba(2, 8, 12, 0.30), rgba(2, 8, 12, 0.52)),
-    url("assets/welcome-reference.png") center center / cover fixed no-repeat;
+    linear-gradient(
+      rgba(2, 8, 12, 0.25),
+      rgba(2, 8, 12, 0.58)
+    ),
+    url("assets/welcome-reference.png")
+      center center / cover
+      fixed
+      no-repeat;
+
   overflow-x: hidden;
+  overflow-y: auto;
 }
+
+
+/* ================================
+   OVERLAY
+   ================================ */
 
 body::before {
   content: "";
   position: fixed;
   inset: 0;
+
   pointer-events: none;
+
   background:
-    radial-gradient(circle at 50% 35%, rgba(255,255,255,0.08), transparent 34%),
-    linear-gradient(rgba(0,0,0,0.10), rgba(0,0,0,0.28));
+    radial-gradient(
+      circle at 50% 35%,
+      rgba(255, 255, 255, 0.08),
+      transparent 38%
+    ),
+    linear-gradient(
+      rgba(0, 0, 0, 0.08),
+      rgba(0, 0, 0, 0.28)
+    );
+
   z-index: -1;
 }
 
-button {
-  font: inherit;
-}
+
+/* ================================
+   ÉCRANS
+   ================================ */
 
 .screen {
-  min-height: 100vh;
+  position: relative;
+
   width: 100%;
+  min-height: 100vh;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px 16px;
+
+  padding: 30px 18px;
 }
+
+
+/* Écran de la surprise */
+
+#surprise-screen {
+  align-items: flex-start;
+
+  padding-top: 35px;
+  padding-bottom: 80px;
+}
+
+
+/* ================================
+   MASQUER UN ÉLÉMENT
+   ================================ */
 
 .hidden {
   display: none !important;
 }
 
+
+/* ================================
+   CARTE PRINCIPALE
+   ================================ */
+
 .card {
   width: min(720px, 100%);
-  padding: 28px 22px;
+
+  padding: 32px 24px 40px;
+
   border: 1px solid rgba(255, 255, 255, 0.20);
-  border-radius: 24px;
-  background: rgba(4, 12, 16, 0.68);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.45);
+  border-radius: 26px;
+
+  background: rgba(4, 12, 16, 0.76);
+
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  box-shadow:
+    0 20px 70px rgba(0, 0, 0, 0.50);
+
   text-align: center;
-  animation: fadeIn 0.7s ease;
+
+  animation: fadeIn 0.5s ease;
 }
 
+
+/* ================================
+   COMPTEUR D'ÉTAPE
+   ================================ */
+
 .step-counter {
-  margin-bottom: 18px;
-  font-size: 0.85rem;
-  letter-spacing: 0.18em;
+  margin-bottom: 20px;
+
+  font-size: 0.82rem;
+  letter-spacing: 0.20em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.72);
+
+  color: rgba(255, 255, 255, 0.70);
 }
+
+
+/* ================================
+   TITRES
+   ================================ */
 
 h1,
 h2 {
-  margin: 0 0 18px;
+  margin: 0 0 20px;
+
   line-height: 1.25;
   font-weight: 600;
+
+  text-shadow:
+    0 3px 15px rgba(0, 0, 0, 0.45);
 }
 
 h1 {
-  font-size: clamp(1.8rem, 7vw, 3rem);
+  font-size: clamp(1.9rem, 7vw, 3rem);
 }
 
 h2 {
-  font-size: clamp(1.55rem, 6vw, 2.35rem);
+  font-size: clamp(1.6rem, 6vw, 2.35rem);
 }
+
+
+/* ================================
+   TEXTES
+   ================================ */
 
 p {
-  line-height: 1.75;
-  font-size: 1.04rem;
+  margin: 0 0 18px;
+
+  font-size: 1.05rem;
+  line-height: 1.8;
 }
 
-#step-content {
-  margin-bottom: 18px;
+#step-body {
+  margin-bottom: 20px;
 }
 
-.message {
-  white-space: pre-line;
-  text-align: left;
-  margin: 0 auto;
+.message,
+.final-message {
+  width: 100%;
   max-width: 650px;
+
+  margin: 0 auto;
+
+  line-height: 1.9;
+
+  text-align: left;
+
+  white-space: normal;
 }
+
+.final-message {
+  text-align: center;
+}
+
+
+/* ================================
+   BOUTONS
+   ================================ */
 
 button {
-  border: 0;
-  border-radius: 999px;
-  padding: 12px 22px;
-  margin: 8px 5px;
-  cursor: pointer;
-  color: #fff;
-  background: rgba(255, 255, 255, 0.15);
+  font: inherit;
+
   border: 1px solid rgba(255, 255, 255, 0.28);
-  transition: transform 0.2s ease, background 0.2s ease;
+  border-radius: 999px;
+
+  padding: 13px 24px;
+  margin: 8px 5px;
+
+  cursor: pointer;
+
+  color: #ffffff;
+
+  background: rgba(255, 255, 255, 0.14);
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    opacity 0.2s ease;
 }
 
 button:hover {
   transform: translateY(-2px);
+
   background: rgba(255, 255, 255, 0.23);
 }
 
+button:active {
+  transform: scale(0.98);
+}
+
 button:disabled {
-  opacity: 0.55;
+  opacity: 0.48;
   cursor: not-allowed;
   transform: none;
 }
@@ -126,71 +247,153 @@ button:disabled {
   margin-top: 18px;
 }
 
-.choice-button {
-  display: block;
-  width: min(560px, 100%);
-  margin: 10px auto;
-  text-align: left;
+.secondary-button {
+  opacity: 0.78;
+  font-size: 0.92rem;
 }
+
+
+/* ================================
+   QUESTIONS
+   ================================ */
 
 .question {
-  margin: 24px auto 14px;
+  margin: 28px auto 16px;
+
   font-size: 1.15rem;
-  line-height: 1.6;
+  line-height: 1.65;
 }
+
+.choice-button {
+  display: block;
+
+  width: min(560px, 100%);
+
+  margin: 10px auto;
+
+  text-align: left;
+}
+
+
+/* ================================
+   FEEDBACK
+   ================================ */
 
 .feedback {
-  margin: 18px auto;
-  padding: 18px;
+  margin: 20px auto;
+
+  padding: 19px;
+
   border-radius: 18px;
+
   background: rgba(255, 255, 255, 0.08);
+
   text-align: left;
-  line-height: 1.7;
-  white-space: pre-line;
+
+  line-height: 1.8;
 }
 
+.feedback.correct {
+  border: 1px solid rgba(130, 220, 160, 0.28);
+
+  background: rgba(40, 100, 65, 0.22);
+}
+
+.feedback.wrong {
+  border: 1px solid rgba(230, 150, 150, 0.25);
+
+  background: rgba(120, 35, 35, 0.20);
+}
+
+
+/* ================================
+   MÉDIAS
+   ================================ */
+
 .media-block {
-  margin: 20px auto;
+  width: 100%;
+  max-width: 650px;
+
+  margin: 26px auto;
 }
 
 .media-block img,
 .media-block video {
   display: block;
+
   width: 100%;
   max-height: 65vh;
+
   object-fit: contain;
+
+  margin: 0 auto 18px;
+
   border-radius: 18px;
-  margin: 0 auto 14px;
-  background: rgba(0, 0, 0, 0.25);
+
+  background: rgba(0, 0, 0, 0.30);
+
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.40);
 }
 
 .media-block audio {
+  display: block;
+
   width: 100%;
-  margin: 10px auto;
+
+  margin: 12px auto;
 }
 
 .caption {
   margin: 0 auto;
-  line-height: 1.65;
+
+  line-height: 1.7;
+
+  text-align: center;
+
   font-style: italic;
+
   color: rgba(255, 255, 255, 0.88);
 }
 
+
+/* ================================
+   TRANSITIONS
+   ================================ */
+
 .transition-text {
-  margin: 24px auto;
-  line-height: 1.8;
+  margin: 26px auto;
+
   font-size: 1.08rem;
+
+  line-height: 1.9;
+
+  text-align: center;
+}
+
+.waiting-message {
+  opacity: 0.72;
+
+  font-size: 0.92rem;
 }
 
 .error-message {
-  padding: 16px;
+  padding: 17px;
+
   border-radius: 16px;
+
   background: rgba(120, 20, 20, 0.35);
-  line-height: 1.6;
+
+  line-height: 1.7;
 }
 
+
+/* ================================
+   ANIMATIONS
+   ================================ */
+
 .fade-out {
-  animation: fadeOut 0.35s ease forwards;
+  animation: fadeOut 0.3s ease forwards;
 }
 
 .fade-in {
@@ -200,7 +403,7 @@ button:disabled {
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(12px);
   }
 
   to {
@@ -219,26 +422,115 @@ button:disabled {
   }
 }
 
+
+/* ================================
+   TÉLÉPHONE
+   ================================ */
+
 @media (max-width: 600px) {
+
   .screen {
-    padding: 14px;
+    min-height: 100vh;
+
+    padding:
+      18px
+      12px
+      40px;
+  }
+
+  #welcome-screen {
+    align-items: center;
+  }
+
+  #surprise-screen {
+    align-items: flex-start;
+
+    padding:
+      18px
+      12px
+      55px;
   }
 
   .card {
-    padding: 24px 16px;
-    border-radius: 20px;
+    width: 100%;
+
+    padding:
+      26px
+      16px
+      32px;
+
+    border-radius: 21px;
   }
 
-  p {
-    font-size: 0.98rem;
+  h1 {
+    font-size: clamp(1.8rem, 8vw, 2.5rem);
+  }
+
+  h2 {
+    font-size: clamp(1.55rem, 7vw, 2.15rem);
+  }
+
+  p,
+  .message,
+  .final-message {
+    font-size: 0.99rem;
+
+    line-height: 1.8;
   }
 
   button {
     width: 100%;
-    margin: 7px 0;
+
+    margin:
+      7px
+      0;
+
+    padding:
+      13px
+      18px;
   }
 
   .choice-button {
     width: 100%;
+  }
+
+  .media-block img,
+  .media-block video {
+    max-height: 58vh;
+
+    border-radius: 16px;
+  }
+
+  .step-counter {
+    font-size: 0.76rem;
+  }
+}
+
+
+/* ================================
+   TRÈS PETITS ÉCRANS
+   ================================ */
+
+@media (max-width: 380px) {
+
+  .card {
+    padding:
+      22px
+      14px
+      28px;
+  }
+
+  h1 {
+    font-size: 1.7rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  p,
+  .message,
+  .final-message {
+    font-size: 0.94rem;
   }
 }
