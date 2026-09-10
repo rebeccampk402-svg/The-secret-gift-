@@ -81,24 +81,14 @@ async function loadSurprise() {
 }
 
 function showWelcome() {
-  if (welcomeScreen) {
-    welcomeScreen.style.display = "flex";
-  }
-
-  if (surpriseScreen) {
-    surpriseScreen.style.display = "none";
-  }
+  if (welcomeScreen) welcomeScreen.style.display = "flex";
+  if (surpriseScreen) surpriseScreen.style.display = "none";
 }
 
 if (welcomeButton) {
   welcomeButton.addEventListener("click", async () => {
-    if (welcomeScreen) {
-      welcomeScreen.style.display = "none";
-    }
-
-    if (surpriseScreen) {
-      surpriseScreen.style.display = "block";
-    }
+    if (welcomeScreen) welcomeScreen.style.display = "none";
+    if (surpriseScreen) surpriseScreen.style.display = "block";
 
     try {
       await backgroundMusic.play();
@@ -108,8 +98,7 @@ if (welcomeButton) {
 
     await renderStep(0);
   });
-}
-
+      }
 function pauseBackgroundMusic() {
   if (!backgroundMusic) return;
 
@@ -163,10 +152,7 @@ async function renderStep(index) {
     return renderStep2();
   }
 
-  if (
-    currentStep.step_number === 3 ||
-    currentStep.step_number === 7
-  ) {
+  if (currentStep.step_number === 3 || currentStep.step_number === 7) {
     return renderQuestionStep();
   }
 
@@ -186,21 +172,10 @@ async function renderStep(index) {
 }
 
 function clearStep() {
-  if (questionContainer) {
-    questionContainer.innerHTML = "";
-  }
-
-  if (mediaContainer) {
-    mediaContainer.innerHTML = "";
-  }
-
-  if (feedbackContainer) {
-    feedbackContainer.innerHTML = "";
-  }
-
-  if (actionContainer) {
-    actionContainer.innerHTML = "";
-  }
+  if (questionContainer) questionContainer.innerHTML = "";
+  if (mediaContainer) mediaContainer.innerHTML = "";
+  if (feedbackContainer) feedbackContainer.innerHTML = "";
+  if (actionContainer) actionContainer.innerHTML = "";
 
   if (christinaAudio) {
     christinaAudio.pause();
@@ -216,12 +191,13 @@ function formatText(text) {
 }
 
 function createContinueButton() {
+  if (!actionContainer) return;
+
   actionContainer.innerHTML = "";
 
   const button = document.createElement("button");
   button.className = "action-button";
   button.textContent = "Continuer ❤️";
-
   button.addEventListener("click", goToNextStep);
 
   actionContainer.appendChild(button);
@@ -258,19 +234,16 @@ async function saveProgress(stepValue) {
         })
         .eq("id", existingProgress.id);
     } else {
-      await supabaseClient
-        .from("progress")
-        .insert({
-          surprise_id: SURPRISE_ID,
-          current_step: stepValue,
-          updated_at: now
-        });
+      await supabaseClient.from("progress").insert({
+        surprise_id: SURPRISE_ID,
+        current_step: stepValue,
+        updated_at: now
+      });
     }
   } catch (error) {
     console.warn("Erreur progression :", error);
   }
-}
-
+  }
 async function renderStep2() {
   const { data: media, error } = await supabaseClient
     .from("media")
@@ -284,9 +257,7 @@ async function renderStep2() {
   }
 
   const photos = (media || []).filter(
-    item =>
-      item.media_type === "image" ||
-      item.media_type === "photo"
+    item => item.media_type === "image" || item.media_type === "photo"
   );
 
   const captions = [
@@ -297,9 +268,7 @@ async function renderStep2() {
     "Et puis il y a ces moments qu’on n’oublie pas…"
   ];
 
-  if (!photos.length) {
-    return createContinueButton();
-  }
+  if (!photos.length) return createContinueButton();
 
   let photoIndex = 0;
 
@@ -316,8 +285,7 @@ async function renderStep2() {
     caption.className = "memory-caption";
     caption.textContent = captions[photoIndex] || "";
 
-    mediaContainer.appendChild(image);
-    mediaContainer.appendChild(caption);
+    mediaContainer.append(image, caption);
 
     const button = document.createElement("button");
     button.className = "action-button";
@@ -340,22 +308,18 @@ async function renderStep2() {
 
 function showStep2Transition() {
   mediaContainer.innerHTML =
-    '<div class="transition-text">' +
-    "Mais est-ce que tu te souviens vraiment ? 👀" +
-    "<br><br>" +
-    "Voyons ça…" +
-    "</div>";
+    '<div class="transition-text">Mais est-ce que tu te souviens vraiment ? 👀<br><br>Voyons ça…</div>';
 
   actionContainer.innerHTML = "";
 
   const button = document.createElement("button");
   button.className = "action-button";
   button.textContent = "Continuer ❤️";
-
   button.addEventListener("click", renderQuestionStep);
 
   actionContainer.appendChild(button);
-                          }
+}
+
 async function renderQuestionStep() {
   const { data: questions, error } = await supabaseClient
     .from("questions")
@@ -363,7 +327,7 @@ async function renderQuestionStep() {
     .eq("step_id", currentStep.id)
     .order("created_at", { ascending: true });
 
-  if (error || !questions || !questions.length) {
+  if (error || !questions?.length) {
     return createContinueButton();
   }
 
@@ -377,12 +341,11 @@ async function renderQuestionStep() {
 
   questionContainer.appendChild(questionText);
 
-  const { data: choices, error: choiceError } =
-    await supabaseClient
-      .from("answer_choices")
-      .select("*")
-      .eq("question_id", question.id)
-      .order("choice_order", { ascending: true });
+  const { data: choices, error: choiceError } = await supabaseClient
+    .from("answer_choices")
+    .select("*")
+    .eq("question_id", question.id)
+    .order("choice_order", { ascending: true });
 
   if (choiceError) {
     console.error("Erreur réponses :", choiceError);
@@ -391,13 +354,9 @@ async function renderQuestionStep() {
 
   choices.forEach(choice => {
     const button = document.createElement("button");
-
     button.className = "answer-choice";
     button.textContent = choice.choice_text;
-
-    button.addEventListener("click", () => {
-      handleAnswer(choice);
-    });
+    button.addEventListener("click", () => handleAnswer(choice));
 
     questionContainer.appendChild(button);
   });
@@ -408,7 +367,6 @@ function handleAnswer(choice) {
   actionContainer.innerHTML = "";
 
   const feedback = document.createElement("div");
-
   feedback.className = choice.is_correct
     ? "feedback correct"
     : "feedback wrong";
@@ -423,17 +381,12 @@ function handleAnswer(choice) {
   feedbackContainer.appendChild(feedback);
 
   const button = document.createElement("button");
-
   button.className = "action-button";
-  button.textContent = choice.is_correct
-    ? "Continuer ❤️"
-    : "Réessayer";
+  button.textContent = choice.is_correct ? "Continuer ❤️" : "Réessayer";
 
   button.addEventListener(
     "click",
-    choice.is_correct
-      ? goToNextStep
-      : renderQuestionStep
+    choice.is_correct ? goToNextStep : renderQuestionStep
   );
 
   actionContainer.appendChild(button);
@@ -445,9 +398,7 @@ async function renderStep4() {
   mediaContainer.innerHTML = "";
 
   const before = document.createElement("div");
-
   before.className = "media-message";
-
   before.innerHTML =
     "Cette fois, pas d’énigme. 🎧<br>" +
     "Juste un moment pour écouter… et laisser la musique parler. ❤️<br><br>" +
@@ -460,14 +411,11 @@ async function renderStep4() {
     christinaAudio.src = CHRISTINA_MUSIC_URL;
     christinaAudio.controls = true;
     christinaAudio.style.display = "block";
-
     mediaContainer.appendChild(christinaAudio);
   }
 
   const after = document.createElement("div");
-
   after.className = "media-message";
-
   after.innerHTML =
     "Alors… qu’est-ce que cette chanson t’a fait ressentir ? ❤️<br><br>" +
     "Certaines choses sont difficiles à expliquer avec des mots.<br>" +
@@ -500,9 +448,7 @@ async function renderStep8() {
     item => item.media_type === "video"
   );
 
-  if (!videos.length) {
-    return createContinueButton();
-  }
+  if (!videos.length) return createContinueButton();
 
   let videoIndex = 0;
 
@@ -511,7 +457,6 @@ async function renderStep8() {
     actionContainer.innerHTML = "";
 
     const text = document.createElement("div");
-
     text.className = "media-message";
 
     text.innerHTML =
@@ -529,7 +474,6 @@ async function renderStep8() {
     mediaContainer.appendChild(text);
 
     const video = document.createElement("video");
-
     video.src = videos[videoIndex].media_url;
     video.controls = true;
     video.playsInline = true;
@@ -543,10 +487,8 @@ async function renderStep8() {
         videoIndex++;
 
         const button = document.createElement("button");
-
         button.className = "action-button";
         button.textContent = "Continuer ❤️";
-
         button.addEventListener("click", showVideo);
 
         actionContainer.appendChild(button);
@@ -574,10 +516,8 @@ function showStep8FinalText() {
   actionContainer.innerHTML = "";
 
   const button = document.createElement("button");
-
   button.className = "action-button";
   button.textContent = "Continuer ❤️";
-
   button.addEventListener("click", goToNextStep);
 
   actionContainer.appendChild(button);
@@ -623,8 +563,8 @@ function showError(message) {
     "<p>" +
     message +
     "</p>" +
-    '<button class="action-button" onclick="location.reload()">' +
-    "Réessayer" +
-    "</button>" +
+    '<button class="action-button" onclick="location.reload()">Réessayer</button>' +
     "</div>";
-}
+         }
+  
+      
