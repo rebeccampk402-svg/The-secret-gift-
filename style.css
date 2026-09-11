@@ -1,25 +1,31 @@
+/* =========================================================
+   THE SECRET GIFT
+   CSS COMPLET
+   ========================================================= */
+
+
+/* =========================================================
+   1. BASE
+   ========================================================= */
+
 * {
   box-sizing: border-box;
 }
 
-html,
-body {
+html {
   margin: 0;
   padding: 0;
   width: 100%;
   min-height: 100%;
-}
-
-html {
   scroll-behavior: smooth;
 }
 
 body {
-  position: relative;
-
+  margin: 0;
+  padding: 0;
   width: 100%;
   min-height: 100vh;
-  min-height: 100dvh;
+  min-height: 100svh;
 
   overflow-x: hidden;
   overflow-y: auto;
@@ -27,140 +33,45 @@ body {
   font-family: Georgia, "Times New Roman", serif;
   color: #ffffff;
 
-  background-color: #071016;
-}
-
-
-/* =========================================
-   IMAGE DE FOND
-   ========================================= */
-
-body::before {
-  content: "";
-
-  position: fixed;
-  inset: 0;
-
-  width: 100%;
-  height: 100%;
-
-  z-index: 0;
-
-  pointer-events: none;
-
-  background:
+  background-color: #090710;
+  background-image:
     linear-gradient(
-      rgba(0, 0, 0, 0.12),
-      rgba(0, 0, 0, 0.32)
+      rgba(0, 0, 0, 0.18),
+      rgba(0, 0, 0, 0.38)
     ),
-    url("welcome-reference.png") center center / cover no-repeat;
+    url("welcome-reference.png");
 
-  transform-origin: center center;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
 }
 
 
-/* =========================================
-   VOILE LÉGER
-   ========================================= */
-
-body::after {
-  content: "";
-
-  position: fixed;
-  inset: 0;
-
-  width: 100%;
-  height: 100%;
-
-  z-index: 0;
-
-  pointer-events: none;
-
-  background:
-    radial-gradient(
-      circle at 50% 40%,
-      rgba(255, 255, 255, 0.08),
-      transparent 45%
-    );
-}
-
-
-/* =========================================
-   ÉCRANS
-   ========================================= */
+/* =========================================================
+   2. ÉCRANS
+   ========================================================= */
 
 .screen {
   position: relative;
-  z-index: 1;
 
   width: 100%;
   min-height: 100vh;
-  min-height: 100dvh;
+  min-height: 100svh;
+
+  padding: 40px 20px;
 
   display: flex;
-
   align-items: center;
   justify-content: center;
-
-  padding: 30px 18px;
-
-  background: transparent;
 }
 
 
-/* =========================================
-   ÉCRAN D'ACCUEIL
-   ========================================= */
-
-#welcome-screen {
-  position: relative;
-  z-index: 1;
-
-  width: 100%;
-  min-height: 100vh;
-  min-height: 100dvh;
-
-  display: flex;
-
-  align-items: center;
-  justify-content: center;
-
-  padding: 30px 18px;
-
-  background: transparent;
-}
-
-
-/* =========================================
-   ÉCRAN DE SURPRISE
-   ========================================= */
-
-#surprise-screen {
-  position: relative;
-  z-index: 1;
-
-  width: 100%;
-  min-height: 100vh;
-  min-height: 100dvh;
-
-  display: flex;
-
-  align-items: center;
-  justify-content: center;
-
-  padding: 30px 18px;
-
-  background: transparent;
-}
-
-
-/* =========================================
-   ÉCRANS CACHÉS
-   ========================================= */
-
-.hidden {
-  display: none !important;
-}
+/*
+   IMPORTANT :
+   Ces règles permettent à .hidden de fonctionner réellement.
+   Le !important est volontaire.
+*/
 
 #welcome-screen.hidden,
 #surprise-screen.hidden {
@@ -168,38 +79,433 @@ body::after {
 }
 
 
-/* =========================================
-   CONTENU
-   ========================================= */
+/* Écran visible */
 
-.card {
-  position: relative;
-  z-index: 2;
-
-  width: min(760px, 94%);
-  max-width: 760px;
-
-  margin: 0 auto;
-
-  padding: 20px 12px 35px;
-
-  background: transparent;
-
-  border: none;
-  border-radius: 0;
-
-  box-shadow: none;
-
-  text-align: center;
-
-  animation: contentAppear 0.8s ease;
+#welcome-screen:not(.hidden),
+#surprise-screen:not(.hidden) {
+  display: flex;
 }
 
 
-@keyframes contentAppear {
+/* =========================================================
+   3. CARTE PRINCIPALE
+   ========================================================= */
+
+.card {
+  position: relative;
+
+  width: min(92%, 760px);
+
+  margin: 0 auto;
+  padding: 34px 34px 40px;
+
+  text-align: center;
+
+  background: rgba(12, 9, 22, 0.72);
+
+  border: 1px solid rgba(255, 255, 255, 0.18);
+
+  border-radius: 28px;
+
+  box-shadow:
+    0 25px 70px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+
+  animation: cardAppear 0.8s ease;
+}
+
+
+/* =========================================================
+   4. COMPTEUR D'ÉTAPE
+   ========================================================= */
+
+.step-counter {
+  margin-bottom: 18px;
+
+  font-size: 0.85rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+
+  color: rgba(255, 255, 255, 0.72);
+}
+
+
+/* =========================================================
+   5. TITRES
+   ========================================================= */
+
+#welcome-title,
+#step-title {
+  margin: 0 0 22px;
+
+  font-weight: normal;
+  line-height: 1.25;
+
+  color: #ffffff;
+
+  text-shadow:
+    0 3px 15px rgba(0, 0, 0, 0.65);
+}
+
+#welcome-title {
+  font-size: clamp(2rem, 5vw, 3.2rem);
+}
+
+#step-title {
+  font-size: clamp(1.8rem, 4.5vw, 2.8rem);
+}
+
+
+/* =========================================================
+   6. TEXTE DES ÉTAPES
+   ========================================================= */
+
+#welcome-text,
+#step-body {
+  font-size: 1.08rem;
+  line-height: 1.85;
+
+  color: rgba(255, 255, 255, 0.94);
+
+  text-shadow:
+    0 2px 10px rgba(0, 0, 0, 0.55);
+}
+
+#step-body {
+  margin-top: 8px;
+}
+
+
+/* Paragraphes */
+
+#step-body p {
+  margin: 0 0 20px;
+}
+
+#step-body p:last-child {
+  margin-bottom: 0;
+}
+
+
+/* =========================================================
+   7. QUESTIONS
+   ========================================================= */
+
+#question-container {
+  width: 100%;
+  margin-top: 30px;
+}
+
+#question-container p {
+  margin: 0 0 22px;
+
+  font-size: 1.08rem;
+  line-height: 1.7;
+}
+
+
+/* =========================================================
+   8. CHOIX DE RÉPONSE
+   ========================================================= */
+
+#question-container button {
+  display: block;
+
+  width: min(100%, 600px);
+
+  margin: 12px auto;
+  padding: 15px 20px;
+
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 16px;
+
+  background: rgba(255, 255, 255, 0.08);
+
+  color: #ffffff;
+
+  font-family: inherit;
+  font-size: 1rem;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+#question-container button:hover {
+  transform: translateY(-2px);
+
+  background: rgba(255, 255, 255, 0.15);
+
+  border-color: rgba(255, 255, 255, 0.42);
+
+  box-shadow:
+    0 10px 25px rgba(0, 0, 0, 0.25);
+}
+
+#question-container button:active {
+  transform: translateY(0);
+}
+
+
+/* =========================================================
+   9. FEEDBACK
+   ========================================================= */
+
+#feedback-container {
+  width: 100%;
+  margin-top: 24px;
+}
+
+#feedback-container p {
+  margin: 0 auto 18px;
+
+  font-size: 1.02rem;
+  line-height: 1.8;
+}
+
+#feedback-container strong {
+  color: #ffffff;
+}
+
+
+/* =========================================================
+   10. MÉDIAS
+   ========================================================= */
+
+#media-container {
+  width: 100%;
+
+  margin: 32px auto 0;
+
+  text-align: center;
+}
+
+
+/*
+   PHOTOS
+   ---------------------------------------------
+   On ne force PAS une hauteur.
+   On conserve le ratio naturel de chaque photo.
+*/
+
+#media-container img {
+  display: block;
+
+  width: auto;
+  max-width: 100%;
+  height: auto;
+
+  max-height: 70vh;
+
+  margin: 0 auto 24px;
+
+  object-fit: contain;
+
+  border-radius: 18px;
+
+  box-shadow:
+    0 18px 45px rgba(0, 0, 0, 0.55);
+
+  image-rendering: auto;
+
+  animation: mediaAppear 0.7s ease;
+}
+
+
+/*
+   Quand les photos sont verticales,
+   elles restent proportionnelles.
+*/
+
+#media-container img[src] {
+  object-position: center center;
+}
+
+
+/* =========================================================
+   11. VIDÉOS
+   ========================================================= */
+
+#media-container video {
+  display: block;
+
+  width: 100%;
+  max-width: 650px;
+
+  height: auto;
+  max-height: 70vh;
+
+  margin: 0 auto 24px;
+
+  border-radius: 18px;
+
+  background: #000000;
+
+  object-fit: contain;
+
+  box-shadow:
+    0 18px 45px rgba(0, 0, 0, 0.55);
+
+  animation: mediaAppear 0.7s ease;
+}
+
+
+/* =========================================================
+   12. AUDIO
+   ========================================================= */
+
+#christina-audio {
+  display: none;
+}
+
+
+/* Si ton JS rend l'audio visible */
+
+#christina-audio.visible {
+  display: block;
+
+  width: min(100%, 600px);
+
+  margin: 25px auto;
+}
+
+
+/* =========================================================
+   13. BOUTONS D'ACTION
+   ========================================================= */
+
+#action-container {
+  width: 100%;
+  margin-top: 30px;
+}
+
+#action-container button,
+#start-button {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  min-width: 190px;
+
+  margin: 8px;
+  padding: 14px 25px;
+
+  border: 1px solid rgba(255, 255, 255, 0.25);
+
+  border-radius: 999px;
+
+  background: rgba(255, 255, 255, 0.12);
+
+  color: #ffffff;
+
+  font-family: inherit;
+  font-size: 1rem;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 10px 25px rgba(0, 0, 0, 0.25);
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+#action-container button:hover,
+#start-button:hover {
+  transform: translateY(-2px);
+
+  background: rgba(255, 255, 255, 0.2);
+
+  border-color: rgba(255, 255, 255, 0.45);
+
+  box-shadow:
+    0 14px 30px rgba(0, 0, 0, 0.35);
+}
+
+#action-container button:active,
+#start-button:active {
+  transform: translateY(0);
+}
+
+
+/* =========================================================
+   14. ÉCRAN D'ACCUEIL
+   ========================================================= */
+
+#welcome-screen {
+  text-align: center;
+}
+
+
+/* Le bouton d'accueil */
+
+#start-button {
+  margin-top: 30px;
+}
+
+
+/* =========================================================
+   15. LISTES / CONTENU RICHE
+   ========================================================= */
+
+#step-body ul,
+#step-body ol {
+  text-align: left;
+
+  width: min(100%, 620px);
+
+  margin: 20px auto;
+
+  padding-left: 25px;
+}
+
+#step-body li {
+  margin-bottom: 10px;
+  line-height: 1.7;
+}
+
+
+/* =========================================================
+   16. TEXTE AVEC SAUTS DE LIGNE
+   ========================================================= */
+
+#step-body {
+  white-space: normal;
+}
+
+
+/* =========================================================
+   17. ANIMATIONS
+   ========================================================= */
+
+@keyframes cardAppear {
   from {
     opacity: 0;
-    transform: translateY(22px);
+    transform: translateY(25px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+
+@keyframes mediaAppear {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
   }
 
   to {
@@ -209,278 +515,77 @@ body::after {
 }
 
 
-/* =========================================
-   COMPTEUR
-   ========================================= */
+/* =========================================================
+   18. ÉCRANS TRÈS LARGES
+   ========================================================= */
 
-.step-counter {
-  margin-bottom: 16px;
+@media (min-width: 1000px) {
 
-  font-size: 0.95rem;
-  letter-spacing: 3px;
-
-  color: rgba(255, 255, 255, 0.92);
-
-  text-shadow:
-    0 2px 10px rgba(0, 0, 0, 0.95);
-}
-
-
-/* =========================================
-   TITRES
-   ========================================= */
-
-h1,
-h2 {
-  margin: 10px 0 20px;
-
-  line-height: 1.3;
-
-  text-shadow:
-    0 3px 16px rgba(0, 0, 0, 0.95);
-}
-
-h1 {
-  font-size: clamp(2.2rem, 8vw, 3.4rem);
-}
-
-h2 {
-  font-size: clamp(1.95rem, 7vw, 2.9rem);
-}
-
-
-/* =========================================
-   TEXTES
-   ========================================= */
-
-p {
-  margin: 12px 0;
-
-  line-height: 1.85;
-
-  text-shadow:
-    0 2px 12px rgba(0, 0, 0, 0.95);
-}
-
-#step-body {
-  font-size: 1.18rem;
-  line-height: 1.9;
-
-  text-shadow:
-    0 2px 12px rgba(0, 0, 0, 0.95);
-}
-
-
-/* =========================================
-   QUESTIONS
-   ========================================= */
-
-#question-container {
-  margin-top: 30px;
-}
-
-.question-text {
-  margin-bottom: 24px;
-
-  font-size: 1.24rem;
-  line-height: 1.75;
-
-  text-shadow:
-    0 2px 12px rgba(0, 0, 0, 0.95);
-}
-
-
-/* =========================================
-   RÉPONSES
-   ========================================= */
-
-.answer-choice {
-  display: block;
-
-  width: 100%;
-
-  margin: 13px 0;
-  padding: 15px 18px;
-
-  background: rgba(0, 0, 0, 0.20);
-
-  border: 1px solid rgba(255, 255, 255, 0.38);
-  border-radius: 16px;
-
-  color: #ffffff;
-
-  font-family: inherit;
-  font-size: 1.10rem;
-
-  cursor: pointer;
-
-  text-shadow:
-    0 2px 7px rgba(0, 0, 0, 0.9);
-
-  transition:
-    transform 0.25s ease,
-    background 0.25s ease,
-    border-color 0.25s ease;
-}
-
-.answer-choice:hover {
-  transform: translateY(-2px);
-
-  background: rgba(255, 255, 255, 0.13);
-
-  border-color: rgba(255, 255, 255, 0.65);
-}
-
-
-/* =========================================
-   FEEDBACK
-   ========================================= */
-
-#feedback-container {
-  margin-top: 24px;
-
-  font-size: 1.14rem;
-  line-height: 1.85;
-
-  text-shadow:
-    0 2px 12px rgba(0, 0, 0, 0.95);
-}
-
-
-/* =========================================
-   PHOTOS ET VIDÉOS
-   ========================================= */
-
-#media-container {
-  margin-top: 30px;
-}
-
-#media-container img,
-#media-container video {
-  display: block;
-
-  width: 100%;
-  max-width: 650px;
-  max-height: 62vh;
-
-  margin: 0 auto;
-
-  object-fit: contain;
-
-  border-radius: 18px;
-
-  box-shadow:
-    0 15px 45px rgba(0, 0, 0, 0.55);
-
-  animation: mediaAppear 0.8s ease;
-}
-
-
-@keyframes mediaAppear {
-  from {
-    opacity: 0;
-    transform: scale(0.94);
+  .screen {
+    padding: 60px 30px;
   }
 
-  to {
-    opacity: 1;
-    transform: scale(1);
+  .card {
+    width: min(82%, 800px);
+    padding: 42px 45px 48px;
+  }
+
+  #media-container img {
+    max-width: 680px;
+    max-height: 72vh;
+  }
+
+  #media-container video {
+    max-width: 700px;
+    max-height: 72vh;
   }
 }
 
 
-/* =========================================
-   BOUTONS
-   ========================================= */
+/* =========================================================
+   19. TABLETTES
+   ========================================================= */
 
-button {
-  margin-top: 24px;
+@media (max-width: 800px) {
 
-  padding: 15px 27px;
+  .screen {
+    padding: 35px 18px;
+  }
 
-  border: 1px solid rgba(255, 255, 255, 0.42);
-  border-radius: 999px;
+  .card {
+    width: 94%;
+    padding: 30px 25px 35px;
+  }
 
-  background: rgba(0, 0, 0, 0.22);
+  #media-container img {
+    max-width: 100%;
+    max-height: 65vh;
+  }
 
-  color: #ffffff;
-
-  font-family: inherit;
-  font-size: 1.08rem;
-
-  cursor: pointer;
-
-  box-shadow:
-    0 8px 25px rgba(0, 0, 0, 0.30);
-
-  text-shadow:
-    0 2px 6px rgba(0, 0, 0, 0.8);
-
-  transition:
-    transform 0.25s ease,
-    background 0.25s ease,
-    border-color 0.25s ease;
-}
-
-button:hover {
-  transform: translateY(-2px);
-
-  background: rgba(255, 255, 255, 0.15);
-
-  border-color: rgba(255, 255, 255, 0.65);
-}
-
-button:active {
-  transform: scale(0.97);
+  #media-container video {
+    max-width: 100%;
+    max-height: 65vh;
+  }
 }
 
 
-/* =========================================
-   AUDIO
-   ========================================= */
-
-audio {
-  display: none;
-}
-
-
-/* =========================================
-   TÉLÉPHONE
-   ========================================= */
+/* =========================================================
+   20. TÉLÉPHONE
+   ========================================================= */
 
 @media (max-width: 600px) {
 
+  html,
   body {
-    min-height: 100vh;
-    min-height: 100dvh;
-
-    overflow-x: hidden;
-    overflow-y: auto;
+    width: 100%;
+    min-height: 100%;
   }
 
+  body {
+    background-attachment: scroll;
 
-  body::before {
-    position: fixed;
-    inset: 0;
-
-    width: 100%;
-    height: 100%;
-
-    background:
-      linear-gradient(
-        rgba(0, 0, 0, 0.12),
-        rgba(0, 0, 0, 0.32)
-      ),
-      url("welcome-reference.png") center center / cover no-repeat;
-  }
-
-
-  body::after {
-    position: fixed;
-    inset: 0;
-
-    width: 100%;
-    height: 100%;
+    background-position: center center;
+    background-size: cover;
   }
 
 
@@ -488,120 +593,177 @@ audio {
     width: 100%;
 
     min-height: 100vh;
-    min-height: 100dvh;
+    min-height: 100svh;
 
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    padding: 25px 14px 50px;
-
-    background: transparent;
-  }
-
-
-  #welcome-screen {
-    width: 100%;
-
-    min-height: 100vh;
-    min-height: 100dvh;
-
-    display: flex;
+    padding: 25px 14px 45px;
 
     align-items: center;
     justify-content: center;
-
-    padding: 25px 14px 50px;
-  }
-
-
-  #surprise-screen {
-    width: 100%;
-
-    min-height: 100vh;
-    min-height: 100dvh;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    padding: 25px 14px 50px;
-  }
-
-
-  #welcome-screen.hidden,
-  #surprise-screen.hidden {
-    display: none !important;
   }
 
 
   .card {
-    position: relative;
+    width: 96%;
 
-    width: 94%;
-    max-width: 760px;
+    margin: auto;
 
-    margin: 0 auto;
+    padding: 28px 18px 32px;
 
-    padding: 10px 5px 25px;
+    border-radius: 22px;
 
-    background: transparent;
-
-    border: none;
-    box-shadow: none;
-
-    text-align: center;
+    background: rgba(10, 8, 18, 0.70);
   }
 
 
   .step-counter {
-    font-size: 0.92rem;
+    margin-bottom: 15px;
+
+    font-size: 0.76rem;
+    letter-spacing: 0.2em;
   }
 
 
-  h1 {
-    font-size: 2.2rem;
+  #welcome-title {
+    font-size: 2rem;
   }
 
 
-  h2 {
-    font-size: 1.9rem;
+  #step-title {
+    font-size: 1.75rem;
   }
 
 
+  #welcome-text,
   #step-body {
-    font-size: 1.14rem;
-    line-height: 1.85;
+    font-size: 1rem;
+    line-height: 1.75;
   }
 
 
-  .question-text {
-    font-size: 1.18rem;
-    line-height: 1.7;
+  #question-container {
+    margin-top: 25px;
   }
 
 
-  #feedback-container {
-    font-size: 1.10rem;
-  }
-
-
-  .answer-choice {
-    font-size: 1.08rem;
-    padding: 15px;
-  }
-
-
-  button {
+  #question-container button {
     width: 100%;
-    font-size: 1.08rem;
+
+    padding: 14px 16px;
+
+    font-size: 0.96rem;
   }
 
 
-  #media-container img,
+  /*
+     IMPORTANT :
+     on garde les proportions originales
+     des photos sur téléphone.
+  */
+
+  #media-container {
+    width: 100%;
+    margin-top: 28px;
+  }
+
+
+  #media-container img {
+    display: block;
+
+    width: auto;
+    max-width: 100%;
+
+    height: auto;
+
+    max-height: 58vh;
+
+    margin: 0 auto 20px;
+
+    border-radius: 14px;
+  }
+
+
   #media-container video {
-    max-height: 55vh;
+    width: 100%;
+    max-width: 100%;
+
+    height: auto;
+
+    max-height: 58vh;
+
+    margin: 0 auto 20px;
+
+    border-radius: 14px;
   }
+
+
+  #action-container {
+    margin-top: 25px;
+  }
+
+
+  #action-container button,
+  #start-button {
+    width: 90%;
+
+    min-width: 0;
+
+    margin: 8px auto;
+
+    padding: 14px 20px;
+  }
+}
+
+
+/* =========================================================
+   21. TRÈS PETITS TÉLÉPHONES
+   ========================================================= */
+
+@media (max-width: 380px) {
+
+  .screen {
+    padding: 20px 10px 35px;
+  }
+
+  .card {
+    width: 98%;
+    padding: 24px 14px 28px;
+  }
+
+  #welcome-title {
+    font-size: 1.75rem;
+  }
+
+  #step-title {
+    font-size: 1.55rem;
+  }
+
+  #welcome-text,
+  #step-body {
+    font-size: 0.96rem;
+  }
+
+  #media-container img {
+    max-height: 54vh;
+  }
+
+  #media-container video {
+    max-height: 54vh;
+  }
+}
+
+
+/* =========================================================
+   22. CORRECTION FINALE DU HIDDEN
+   ========================================================= */
+
+/*
+   NE PAS SUPPRIMER.
+
+   Ces deux règles sont prioritaires sur les anciennes
+   règles display:flex !important.
+*/
+
+#welcome-screen.hidden,
+#surprise-screen.hidden {
+  display: none !important;
 }
