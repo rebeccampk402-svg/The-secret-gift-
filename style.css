@@ -12,12 +12,14 @@ body {
 
 html {
   scroll-behavior: smooth;
-  background: #071016;
 }
 
 body {
-  min-height: 100vh;
+  position: relative;
+
   width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
 
   overflow-x: hidden;
   overflow-y: auto;
@@ -25,29 +27,61 @@ body {
   font-family: Georgia, "Times New Roman", serif;
   color: #ffffff;
 
-  /*
-    FOND PRINCIPAL
-    L'image est à la racine du dépôt,
-    au même niveau que index.html et style.css.
-  */
-  background-image:
+  background-color: #071016;
+}
+
+
+/* =========================================
+   IMAGE DE FOND
+   ========================================= */
+
+body::before {
+  content: "";
+
+  position: fixed;
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  z-index: 0;
+
+  pointer-events: none;
+
+  background:
     linear-gradient(
-      rgba(0, 0, 0, 0.18),
-      rgba(0, 0, 0, 0.38)
+      rgba(0, 0, 0, 0.12),
+      rgba(0, 0, 0, 0.32)
     ),
-    url("welcome-reference.png");
+    url("welcome-reference.png") center center / cover no-repeat;
 
-  background-position: center center;
-  background-size: cover;
-  background-repeat: no-repeat;
+  transform-origin: center center;
+}
 
-  /*
-    On évite fixed sur mobile pour empêcher
-    les problèmes d'affichage du fond.
-  */
-  background-attachment: scroll;
 
-  position: relative;
+/* =========================================
+   VOILE LÉGER
+   ========================================= */
+
+body::after {
+  content: "";
+
+  position: fixed;
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  z-index: 0;
+
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      circle at 50% 40%,
+      rgba(255, 255, 255, 0.08),
+      transparent 45%
+    );
 }
 
 
@@ -64,6 +98,7 @@ body {
   min-height: 100dvh;
 
   display: flex;
+
   align-items: center;
   justify-content: center;
 
@@ -73,9 +108,33 @@ body {
 }
 
 
-/* Les deux écrans utilisent le même fond */
+/* =========================================
+   ÉCRAN D'ACCUEIL
+   ========================================= */
 
-#welcome-screen,
+#welcome-screen {
+  position: relative;
+  z-index: 1;
+
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 30px 18px;
+
+  background: transparent;
+}
+
+
+/* =========================================
+   ÉCRAN DE SURPRISE
+   ========================================= */
+
 #surprise-screen {
   position: relative;
   z-index: 1;
@@ -84,25 +143,24 @@ body {
   min-height: 100vh;
   min-height: 100dvh;
 
+  display: flex;
+
   align-items: center;
   justify-content: center;
+
+  padding: 30px 18px;
 
   background: transparent;
 }
 
 
-/* Écran caché */
+/* =========================================
+   ÉCRANS CACHÉS
+   ========================================= */
 
 .hidden {
   display: none !important;
 }
-
-
-/*
-  IMPORTANT :
-  cette règle est plus spécifique que .screen
-  et permet réellement de cacher un écran.
-*/
 
 #welcome-screen.hidden,
 #surprise-screen.hidden {
@@ -112,11 +170,11 @@ body {
 
 /* =========================================
    CONTENU
-   Aucun cadre noir
    ========================================= */
 
 .card {
   position: relative;
+  z-index: 2;
 
   width: min(760px, 94%);
   max-width: 760px;
@@ -204,7 +262,6 @@ p {
     0 2px 12px rgba(0, 0, 0, 0.95);
 }
 
-
 #step-body {
   font-size: 1.18rem;
   line-height: 1.9;
@@ -221,7 +278,6 @@ p {
 #question-container {
   margin-top: 30px;
 }
-
 
 .question-text {
   margin-bottom: 24px;
@@ -267,7 +323,6 @@ p {
     border-color 0.25s ease;
 }
 
-
 .answer-choice:hover {
   transform: translateY(-2px);
 
@@ -299,7 +354,6 @@ p {
 #media-container {
   margin-top: 30px;
 }
-
 
 #media-container img,
 #media-container video {
@@ -368,7 +422,6 @@ button {
     border-color 0.25s ease;
 }
 
-
 button:hover {
   transform: translateY(-2px);
 
@@ -376,7 +429,6 @@ button:hover {
 
   border-color: rgba(255, 255, 255, 0.65);
 }
-
 
 button:active {
   transform: scale(0.97);
@@ -398,31 +450,43 @@ audio {
 
 @media (max-width: 600px) {
 
-  html,
   body {
-    width: 100%;
-    min-height: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+
+    overflow-x: hidden;
+    overflow-y: auto;
   }
 
 
-  body {
-    /*
-      Sur téléphone, le fond accompagne la page.
-      Cela évite les problèmes de background fixed.
-    */
-    background-attachment: scroll;
+  body::before {
+    position: fixed;
+    inset: 0;
 
-    background-position: center center;
-    background-size: cover;
-    background-repeat: no-repeat;
+    width: 100%;
+    height: 100%;
+
+    background:
+      linear-gradient(
+        rgba(0, 0, 0, 0.12),
+        rgba(0, 0, 0, 0.32)
+      ),
+      url("welcome-reference.png") center center / cover no-repeat;
+  }
+
+
+  body::after {
+    position: fixed;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
   }
 
 
   .screen {
-    position: relative;
-    z-index: 1;
-
     width: 100%;
+
     min-height: 100vh;
     min-height: 100dvh;
 
@@ -437,9 +501,9 @@ audio {
   }
 
 
-  #welcome-screen,
-  #surprise-screen {
+  #welcome-screen {
     width: 100%;
+
     min-height: 100vh;
     min-height: 100dvh;
 
@@ -448,15 +512,24 @@ audio {
     align-items: center;
     justify-content: center;
 
-    background: transparent;
+    padding: 25px 14px 50px;
   }
 
 
-  /*
-    Très important :
-    si l'écran possède la classe hidden,
-    il doit rester caché même sur téléphone.
-  */
+  #surprise-screen {
+    width: 100%;
+
+    min-height: 100vh;
+    min-height: 100dvh;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 25px 14px 50px;
+  }
+
 
   #welcome-screen.hidden,
   #surprise-screen.hidden {
