@@ -33,38 +33,41 @@ body {
   position: relative;
 }
 
-/* Animation douce du décor */
+/* Animation douce de la photo de référence */
 body::before {
   content: "";
   position: fixed;
   inset: -4%;
+
   z-index: -2;
+  pointer-events: none;
 
   background:
     url("welcome-reference.png") center center / cover no-repeat;
 
   animation: backgroundDream 18s ease-in-out infinite alternate;
+
   transform-origin: center center;
-  pointer-events: none;
 }
 
-/* Voile léger */
+/* Voile très léger pour garder le texte lisible */
 body::after {
   content: "";
   position: fixed;
   inset: 0;
+
   z-index: -1;
   pointer-events: none;
 
   background:
     radial-gradient(
       circle at 50% 35%,
-      rgba(255, 255, 255, 0.10),
+      rgba(255, 255, 255, 0.08),
       transparent 42%
     ),
     linear-gradient(
-      rgba(0, 0, 0, 0.05),
-      rgba(0, 0, 0, 0.25)
+      rgba(0, 0, 0, 0.04),
+      rgba(0, 0, 0, 0.20)
     );
 }
 
@@ -78,7 +81,7 @@ body::after {
   }
 }
 
-/* Tous les écrans utilisent le décor */
+/* Chaque écran occupe l'espace disponible */
 .screen {
   position: relative;
 
@@ -89,49 +92,44 @@ body::after {
   align-items: center;
   justify-content: center;
 
-  padding: 40px 18px;
+  padding: 35px 18px;
 }
 
-/* Écran de l'aventure */
+/* Le contenu de l'aventure reste au milieu */
 #surprise-screen {
-  align-items: flex-start;
-  padding-top: 55px;
-  padding-bottom: 100px;
+  align-items: center;
+  justify-content: center;
+
+  padding-top: 40px;
+  padding-bottom: 60px;
 }
 
-/* Cache réellement un écran */
+/* Écran caché */
 .hidden {
   display: none !important;
 }
 
 /*
-   IMPORTANT :
-   la carte n'est plus un bloc noir.
-   Elle devient une surface transparente
-   qui laisse voir la photo derrière.
+   PAS DE CADRE.
+   Le contenu est directement posé
+   sur la photo de référence.
 */
 .card {
   width: min(760px, 100%);
 
-  padding: 25px 20px 35px;
+  padding: 20px 18px 30px;
 
-  background: rgba(5, 10, 18, 0.30);
-
-  border: 1px solid rgba(255, 255, 255, 0.20);
-  border-radius: 24px;
-
-  backdrop-filter: blur(3px);
-  -webkit-backdrop-filter: blur(3px);
-
-  box-shadow:
-    0 15px 50px rgba(0, 0, 0, 0.25);
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
 
   text-align: center;
 
-  animation: cardAppear 0.8s ease;
+  animation: contentAppear 0.8s ease;
 }
 
-@keyframes cardAppear {
+@keyframes contentAppear {
   from {
     opacity: 0;
     transform: translateY(25px);
@@ -143,15 +141,20 @@ body::after {
   }
 }
 
+/* Compteur */
 .step-counter {
-  margin-bottom: 15px;
+  margin-bottom: 14px;
 
   font-size: 0.85rem;
   letter-spacing: 3px;
 
-  color: rgba(255, 255, 255, 0.75);
+  color: rgba(255, 255, 255, 0.82);
+
+  text-shadow:
+    0 2px 10px rgba(0, 0, 0, 0.9);
 }
 
+/* Titres */
 h1,
 h2 {
   margin: 10px 0 18px;
@@ -159,7 +162,7 @@ h2 {
   line-height: 1.25;
 
   text-shadow:
-    0 3px 15px rgba(0, 0, 0, 0.75);
+    0 3px 16px rgba(0, 0, 0, 0.9);
 }
 
 h1 {
@@ -170,8 +173,12 @@ h2 {
   font-size: clamp(1.7rem, 6vw, 2.6rem);
 }
 
+/* Texte */
 p {
   line-height: 1.75;
+
+  text-shadow:
+    0 2px 12px rgba(0, 0, 0, 0.9);
 }
 
 #step-body {
@@ -179,12 +186,12 @@ p {
   line-height: 1.8;
 
   text-shadow:
-    0 2px 10px rgba(0, 0, 0, 0.75);
+    0 2px 12px rgba(0, 0, 0, 0.9);
 }
 
 /* Questions */
 #question-container {
-  margin-top: 30px;
+  margin-top: 28px;
 }
 
 .question-text {
@@ -194,7 +201,7 @@ p {
   line-height: 1.65;
 
   text-shadow:
-    0 2px 10px rgba(0, 0, 0, 0.8);
+    0 2px 12px rgba(0, 0, 0, 0.95);
 }
 
 /* Réponses */
@@ -206,10 +213,10 @@ p {
   margin: 12px 0;
   padding: 15px 18px;
 
-  border: 1px solid rgba(255, 255, 255, 0.30);
-  border-radius: 16px;
+  background: rgba(0, 0, 0, 0.18);
 
-  background: rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 16px;
 
   color: #fff;
 
@@ -217,6 +224,9 @@ p {
   font-size: 1rem;
 
   cursor: pointer;
+
+  text-shadow:
+    0 1px 5px rgba(0, 0, 0, 0.8);
 
   transition:
     transform 0.25s ease,
@@ -226,18 +236,20 @@ p {
 
 .answer-choice:hover {
   transform: translateY(-2px);
-  background: rgba(255, 255, 255, 0.18);
-  border-color: rgba(255, 255, 255, 0.55);
+
+  background: rgba(255, 255, 255, 0.14);
+
+  border-color: rgba(255, 255, 255, 0.60);
 }
 
 /* Feedback */
 #feedback-container {
   margin-top: 22px;
 
-  line-height: 1.7;
+  line-height: 1.75;
 
   text-shadow:
-    0 2px 10px rgba(0, 0, 0, 0.8);
+    0 2px 12px rgba(0, 0, 0, 0.95);
 }
 
 /* Médias */
@@ -257,18 +269,18 @@ p {
 
   object-fit: contain;
 
-  border-radius: 20px;
+  border-radius: 18px;
 
   box-shadow:
     0 15px 45px rgba(0, 0, 0, 0.55);
 
-  animation: mediaAppear 0.7s ease;
+  animation: mediaAppear 0.8s ease;
 }
 
 @keyframes mediaAppear {
   from {
     opacity: 0;
-    transform: scale(0.96);
+    transform: scale(0.94);
   }
 
   to {
@@ -279,16 +291,15 @@ p {
 
 /* Boutons */
 button {
-  border: 0;
+  border: 1px solid rgba(255, 255, 255, 0.40);
+
   border-radius: 999px;
 
   padding: 14px 25px;
 
   margin-top: 22px;
 
-  background: rgba(255, 255, 255, 0.16);
-
-  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(0, 0, 0, 0.20);
 
   color: #fff;
 
@@ -300,40 +311,61 @@ button {
   box-shadow:
     0 8px 25px rgba(0, 0, 0, 0.30);
 
+  text-shadow:
+    0 1px 5px rgba(0, 0, 0, 0.8);
+
   transition:
     transform 0.25s ease,
-    background 0.25s ease;
+    background 0.25s ease,
+    border-color 0.25s ease;
 }
 
 button:hover {
   transform: translateY(-2px);
-  background: rgba(255, 255, 255, 0.25);
+
+  background: rgba(255, 255, 255, 0.15);
+
+  border-color: rgba(255, 255, 255, 0.65);
 }
 
 button:active {
   transform: scale(0.97);
 }
 
-/* Audio */
+/* Audio invisible */
 audio {
   display: none;
 }
 
-/* Téléphone */
+/* =========================
+   VERSION TÉLÉPHONE
+   ========================= */
+
 @media (max-width: 600px) {
+
   .screen {
-    padding: 25px 14px 70px;
+    width: 100%;
+    min-height: 100vh;
+
+    padding: 25px 14px 60px;
   }
 
   #surprise-screen {
-    padding-top: 30px;
+    align-items: center;
+    justify-content: center;
+
+    padding-top: 25px;
+    padding-bottom: 60px;
   }
 
   .card {
     width: 100%;
-    padding: 22px 16px 30px;
 
-    background: rgba(5, 10, 18, 0.24);
+    padding: 15px 8px 25px;
+
+    background: transparent;
+    border: none;
+    box-shadow: none;
   }
 
   h1 {
@@ -348,11 +380,20 @@ audio {
     font-size: 1rem;
   }
 
+  .question-text {
+    font-size: 1.05rem;
+  }
+
   .answer-choice {
     padding: 14px;
   }
 
   button {
     width: 100%;
+  }
+
+  #media-container img,
+  #media-container video {
+    max-height: 58vh;
   }
 }
