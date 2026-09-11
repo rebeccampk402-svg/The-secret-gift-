@@ -1,7 +1,3 @@
-/* ================================
-   THE SECRET GIFT — STYLE
-   ================================ */
-
 * {
   box-sizing: border-box;
 }
@@ -21,55 +17,68 @@ html {
 body {
   min-height: 100vh;
   width: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
 
   font-family: Georgia, "Times New Roman", serif;
-  color: #f7f3ea;
+  color: #f8f4ec;
 
   background:
     linear-gradient(
-      rgba(2, 8, 12, 0.25),
-      rgba(2, 8, 12, 0.58)
+      rgba(3, 8, 15, 0.18),
+      rgba(3, 8, 15, 0.42)
     ),
-    url("welcome-reference.png")
-      center center / cover
-      fixed
-      no-repeat;
+    url("welcome-reference.png") center center / cover fixed no-repeat;
 
-  overflow-x: hidden;
-  overflow-y: auto;
+  position: relative;
 }
 
-
-/* ================================
-   OVERLAY
-   ================================ */
-
+/* Animation douce du décor */
 body::before {
   content: "";
   position: fixed;
-  inset: 0;
+  inset: -4%;
+  z-index: -2;
 
+  background:
+    url("welcome-reference.png") center center / cover no-repeat;
+
+  animation: backgroundDream 18s ease-in-out infinite alternate;
+  transform-origin: center center;
+  pointer-events: none;
+}
+
+/* Voile léger */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
   pointer-events: none;
 
   background:
     radial-gradient(
       circle at 50% 35%,
-      rgba(255, 255, 255, 0.08),
-      transparent 38%
+      rgba(255, 255, 255, 0.10),
+      transparent 42%
     ),
     linear-gradient(
-      rgba(0, 0, 0, 0.08),
-      rgba(0, 0, 0, 0.28)
+      rgba(0, 0, 0, 0.05),
+      rgba(0, 0, 0, 0.25)
     );
-
-  z-index: -1;
 }
 
+@keyframes backgroundDream {
+  0% {
+    transform: scale(1);
+  }
 
-/* ================================
-   ÉCRANS
-   ================================ */
+  100% {
+    transform: scale(1.07);
+  }
+}
 
+/* Tous les écrans utilisent le décor */
 .screen {
   position: relative;
 
@@ -80,330 +89,52 @@ body::before {
   align-items: center;
   justify-content: center;
 
-  padding: 30px 18px;
+  padding: 40px 18px;
 }
 
-
-/* Écran de la surprise */
-
+/* Écran de l'aventure */
 #surprise-screen {
   align-items: flex-start;
-
-  padding-top: 35px;
-  padding-bottom: 80px;
+  padding-top: 55px;
+  padding-bottom: 100px;
 }
 
-
-/* ================================
-   MASQUER UN ÉLÉMENT
-   ================================ */
-
+/* Cache réellement un écran */
 .hidden {
   display: none !important;
 }
 
-
-/* ================================
-   CARTE PRINCIPALE
-   ================================ */
-
+/*
+   IMPORTANT :
+   la carte n'est plus un bloc noir.
+   Elle devient une surface transparente
+   qui laisse voir la photo derrière.
+*/
 .card {
-  width: min(720px, 100%);
+  width: min(760px, 100%);
 
-  padding: 32px 24px 40px;
+  padding: 25px 20px 35px;
+
+  background: rgba(5, 10, 18, 0.30);
 
   border: 1px solid rgba(255, 255, 255, 0.20);
-  border-radius: 26px;
+  border-radius: 24px;
 
-  background: rgba(4, 12, 16, 0.76);
-
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
 
   box-shadow:
-    0 20px 70px rgba(0, 0, 0, 0.50);
+    0 15px 50px rgba(0, 0, 0, 0.25);
 
   text-align: center;
 
-  animation: fadeIn 0.5s ease;
+  animation: cardAppear 0.8s ease;
 }
 
-
-/* ================================
-   COMPTEUR D'ÉTAPE
-   ================================ */
-
-.step-counter {
-  margin-bottom: 20px;
-
-  font-size: 0.82rem;
-  letter-spacing: 0.20em;
-  text-transform: uppercase;
-
-  color: rgba(255, 255, 255, 0.70);
-}
-
-
-/* ================================
-   TITRES
-   ================================ */
-
-h1,
-h2 {
-  margin: 0 0 20px;
-
-  line-height: 1.25;
-  font-weight: 600;
-
-  text-shadow:
-    0 3px 15px rgba(0, 0, 0, 0.45);
-}
-
-h1 {
-  font-size: clamp(1.9rem, 7vw, 3rem);
-}
-
-h2 {
-  font-size: clamp(1.6rem, 6vw, 2.35rem);
-}
-
-
-/* ================================
-   TEXTES
-   ================================ */
-
-p {
-  margin: 0 0 18px;
-
-  font-size: 1.05rem;
-  line-height: 1.8;
-}
-
-#step-body {
-  margin-bottom: 20px;
-}
-
-.message,
-.final-message {
-  width: 100%;
-  max-width: 650px;
-
-  margin: 0 auto;
-
-  line-height: 1.9;
-
-  text-align: left;
-
-  white-space: normal;
-}
-
-.final-message {
-  text-align: center;
-}
-
-
-/* ================================
-   BOUTONS
-   ================================ */
-
-button {
-  font: inherit;
-
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  border-radius: 999px;
-
-  padding: 13px 24px;
-  margin: 8px 5px;
-
-  cursor: pointer;
-
-  color: #ffffff;
-
-  background: rgba(255, 255, 255, 0.14);
-
-  transition:
-    transform 0.2s ease,
-    background 0.2s ease,
-    opacity 0.2s ease;
-}
-
-button:hover {
-  transform: translateY(-2px);
-
-  background: rgba(255, 255, 255, 0.23);
-}
-
-button:active {
-  transform: scale(0.98);
-}
-
-button:disabled {
-  opacity: 0.48;
-  cursor: not-allowed;
-  transform: none;
-}
-
-.primary-button {
-  margin-top: 18px;
-}
-
-.secondary-button {
-  opacity: 0.78;
-  font-size: 0.92rem;
-}
-
-
-/* ================================
-   QUESTIONS
-   ================================ */
-
-.question {
-  margin: 28px auto 16px;
-
-  font-size: 1.15rem;
-  line-height: 1.65;
-}
-
-.choice-button {
-  display: block;
-
-  width: min(560px, 100%);
-
-  margin: 10px auto;
-
-  text-align: left;
-}
-
-
-/* ================================
-   FEEDBACK
-   ================================ */
-
-.feedback {
-  margin: 20px auto;
-
-  padding: 19px;
-
-  border-radius: 18px;
-
-  background: rgba(255, 255, 255, 0.08);
-
-  text-align: left;
-
-  line-height: 1.8;
-}
-
-.feedback.correct {
-  border: 1px solid rgba(130, 220, 160, 0.28);
-
-  background: rgba(40, 100, 65, 0.22);
-}
-
-.feedback.wrong {
-  border: 1px solid rgba(230, 150, 150, 0.25);
-
-  background: rgba(120, 35, 35, 0.20);
-}
-
-
-/* ================================
-   MÉDIAS
-   ================================ */
-
-.media-block {
-  width: 100%;
-  max-width: 650px;
-
-  margin: 26px auto;
-}
-
-.media-block img,
-.media-block video {
-  display: block;
-
-  width: 100%;
-  max-height: 65vh;
-
-  object-fit: contain;
-
-  margin: 0 auto 18px;
-
-  border-radius: 18px;
-
-  background: rgba(0, 0, 0, 0.30);
-
-  box-shadow:
-    0 12px 40px rgba(0, 0, 0, 0.40);
-}
-
-.media-block audio {
-  display: block;
-
-  width: 100%;
-
-  margin: 12px auto;
-}
-
-.caption {
-  margin: 0 auto;
-
-  line-height: 1.7;
-
-  text-align: center;
-
-  font-style: italic;
-
-  color: rgba(255, 255, 255, 0.88);
-}
-
-
-/* ================================
-   TRANSITIONS
-   ================================ */
-
-.transition-text {
-  margin: 26px auto;
-
-  font-size: 1.08rem;
-
-  line-height: 1.9;
-
-  text-align: center;
-}
-
-.waiting-message {
-  opacity: 0.72;
-
-  font-size: 0.92rem;
-}
-
-.error-message {
-  padding: 17px;
-
-  border-radius: 16px;
-
-  background: rgba(120, 20, 20, 0.35);
-
-  line-height: 1.7;
-}
-
-
-/* ================================
-   ANIMATIONS
-   ================================ */
-
-.fade-out {
-  animation: fadeOut 0.3s ease forwards;
-}
-
-.fade-in {
-  animation: fadeIn 0.5s ease;
-}
-
-@keyframes fadeIn {
+@keyframes cardAppear {
   from {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateY(25px);
   }
 
   to {
@@ -412,125 +143,216 @@ button:disabled {
   }
 }
 
-@keyframes fadeOut {
+.step-counter {
+  margin-bottom: 15px;
+
+  font-size: 0.85rem;
+  letter-spacing: 3px;
+
+  color: rgba(255, 255, 255, 0.75);
+}
+
+h1,
+h2 {
+  margin: 10px 0 18px;
+
+  line-height: 1.25;
+
+  text-shadow:
+    0 3px 15px rgba(0, 0, 0, 0.75);
+}
+
+h1 {
+  font-size: clamp(2rem, 7vw, 3.2rem);
+}
+
+h2 {
+  font-size: clamp(1.7rem, 6vw, 2.6rem);
+}
+
+p {
+  line-height: 1.75;
+}
+
+#step-body {
+  font-size: 1.05rem;
+  line-height: 1.8;
+
+  text-shadow:
+    0 2px 10px rgba(0, 0, 0, 0.75);
+}
+
+/* Questions */
+#question-container {
+  margin-top: 30px;
+}
+
+.question-text {
+  margin-bottom: 22px;
+
+  font-size: 1.15rem;
+  line-height: 1.65;
+
+  text-shadow:
+    0 2px 10px rgba(0, 0, 0, 0.8);
+}
+
+/* Réponses */
+.answer-choice {
+  display: block;
+
+  width: 100%;
+
+  margin: 12px 0;
+  padding: 15px 18px;
+
+  border: 1px solid rgba(255, 255, 255, 0.30);
+  border-radius: 16px;
+
+  background: rgba(255, 255, 255, 0.10);
+
+  color: #fff;
+
+  font-family: inherit;
+  font-size: 1rem;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.25s ease,
+    background 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.answer-choice:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.55);
+}
+
+/* Feedback */
+#feedback-container {
+  margin-top: 22px;
+
+  line-height: 1.7;
+
+  text-shadow:
+    0 2px 10px rgba(0, 0, 0, 0.8);
+}
+
+/* Médias */
+#media-container {
+  margin-top: 28px;
+}
+
+#media-container img,
+#media-container video {
+  display: block;
+
+  width: 100%;
+  max-width: 650px;
+  max-height: 65vh;
+
+  margin: 0 auto;
+
+  object-fit: contain;
+
+  border-radius: 20px;
+
+  box-shadow:
+    0 15px 45px rgba(0, 0, 0, 0.55);
+
+  animation: mediaAppear 0.7s ease;
+}
+
+@keyframes mediaAppear {
   from {
-    opacity: 1;
+    opacity: 0;
+    transform: scale(0.96);
   }
 
   to {
-    opacity: 0;
+    opacity: 1;
+    transform: scale(1);
   }
 }
 
+/* Boutons */
+button {
+  border: 0;
+  border-radius: 999px;
 
-/* ================================
-   TÉLÉPHONE
-   ================================ */
+  padding: 14px 25px;
 
+  margin-top: 22px;
+
+  background: rgba(255, 255, 255, 0.16);
+
+  border: 1px solid rgba(255, 255, 255, 0.35);
+
+  color: #fff;
+
+  font-family: inherit;
+  font-size: 1rem;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 8px 25px rgba(0, 0, 0, 0.30);
+
+  transition:
+    transform 0.25s ease,
+    background 0.25s ease;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.25);
+}
+
+button:active {
+  transform: scale(0.97);
+}
+
+/* Audio */
+audio {
+  display: none;
+}
+
+/* Téléphone */
 @media (max-width: 600px) {
-
   .screen {
-    min-height: 100vh;
-
-    padding:
-      18px
-      12px
-      40px;
-  }
-
-  #welcome-screen {
-    align-items: center;
+    padding: 25px 14px 70px;
   }
 
   #surprise-screen {
-    align-items: flex-start;
-
-    padding:
-      18px
-      12px
-      55px;
+    padding-top: 30px;
   }
 
   .card {
     width: 100%;
+    padding: 22px 16px 30px;
 
-    padding:
-      26px
-      16px
-      32px;
-
-    border-radius: 21px;
+    background: rgba(5, 10, 18, 0.24);
   }
 
   h1 {
-    font-size: clamp(1.8rem, 8vw, 2.5rem);
+    font-size: 2rem;
   }
 
   h2 {
-    font-size: clamp(1.55rem, 7vw, 2.15rem);
+    font-size: 1.65rem;
   }
 
-  p,
-  .message,
-  .final-message {
-    font-size: 0.99rem;
+  #step-body {
+    font-size: 1rem;
+  }
 
-    line-height: 1.8;
+  .answer-choice {
+    padding: 14px;
   }
 
   button {
     width: 100%;
-
-    margin:
-      7px
-      0;
-
-    padding:
-      13px
-      18px;
-  }
-
-  .choice-button {
-    width: 100%;
-  }
-
-  .media-block img,
-  .media-block video {
-    max-height: 58vh;
-
-    border-radius: 16px;
-  }
-
-  .step-counter {
-    font-size: 0.76rem;
-  }
-}
-
-
-/* ================================
-   TRÈS PETITS ÉCRANS
-   ================================ */
-
-@media (max-width: 380px) {
-
-  .card {
-    padding:
-      22px
-      14px
-      28px;
-  }
-
-  h1 {
-    font-size: 1.7rem;
-  }
-
-  h2 {
-    font-size: 1.5rem;
-  }
-
-  p,
-  .message,
-  .final-message {
-    font-size: 0.94rem;
   }
 }
