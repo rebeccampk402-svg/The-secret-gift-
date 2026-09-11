@@ -454,3 +454,8 @@ audio {
     max-height: 55vh;
   }
 }
+/* CORRECTION : permet de cacher réellement les écrans */
+#welcome-screen.hidden,
+#surprise-screen.hidden {
+  display: none !important;
+}
