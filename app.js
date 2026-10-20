@@ -757,7 +757,6 @@ function renderGenericStep(step) {
 // ============================================================
 
 async function goToNextStep() {
-    
   if (currentStepIndex >= steps.length - 1) {
     return;
   }
