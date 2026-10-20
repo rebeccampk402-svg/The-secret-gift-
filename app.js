@@ -90,6 +90,23 @@ const backgroundMusic =
 
 const christinaAudio =
   document.getElementById("christina-audio");
+const christinaAudio =
+  document.getElementById("christina-audio");
+
+const introVideoScreen = document.getElementById('intro-video-screen');
+const introVideo = document.getElementById('intro-video');
+const skipVideoBtn = document.getElementById('skip-video');
+const blackScreen = document.getElementById('black-screen');
+const countdownScreen = document.getElementById('countdown-screen');
+const countdownNumber = document.getElementById('countdown-number');
+const transitionScreen = document.getElementById('transition-screen');
+const transitionMessageEl = document.getElementById('transition-message');
+const transitionPromptEl = document.getElementById('transition-prompt');
+const transitionContinueBtn = document.getElementById('transition-continue');
+const stepAudioPlayer = document.getElementById('step-audio-player');
+
+let musicWasPlaying = false;
+
 
 
 // ============================================================
