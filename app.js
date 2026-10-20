@@ -55,6 +55,8 @@ let stepTwoQuestionIndex = -2;
 let stepEightVideoIndex = 0;
 
 let pausedMusicTime = 0;
+let musicPlaying = false;
+let musicWasPlaying = false;
 
 
 // ============================================================
@@ -755,6 +757,13 @@ function renderGenericStep(step) {
 // ============================================================
 
 async function goToNextStep() {
+    if (!isGardenSurprise && currentStepIndex < steps.length) {
+    const currentStep = steps[currentStepIndex];
+    if (currentStep.transition_message) {
+      await showTransitionScreen(currentStep.transition_message, currentStep.transition_prompt);
+    }
+    }
+  
   if (currentStepIndex >= steps.length - 1) {
     return;
   }
