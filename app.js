@@ -757,13 +757,7 @@ function renderGenericStep(step) {
 // ============================================================
 
 async function goToNextStep() {
-      if (!isGardenSurprise && typeof showTransitionScreen !== 'undefined' && currentStepIndex < steps.length) {
-    const currentStep = steps[currentStepIndex];
-    if (currentStep && currentStep.transition_message) {
-      await showTransitionScreen(currentStep.transition_message, currentStep.transition_prompt);
-    }
-      }
-  
+    
   if (currentStepIndex >= steps.length - 1) {
     return;
   }
