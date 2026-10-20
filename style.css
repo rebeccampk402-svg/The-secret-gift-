@@ -944,3 +944,124 @@ button:active {
 #surprise-screen.hidden {
   display: none !important;
    }
+/* =========================================================
+   Écrans personnalisés
+   ========================================================= */
+
+/* Écran vidéo d'introduction */
+.video-screen {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  z-index: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.full-video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.skip-btn {
+  position: absolute;
+  bottom: 2rem;
+  right: 2rem;
+  background: rgba(255,255,255,0.2);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 50px;
+  cursor: pointer;
+  font-size: 1rem;
+  z-index: 901;
+}
+
+/* Écran noir */
+.black-screen {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  z-index: 850;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+.black-screen.visible {
+  opacity: 1;
+}
+
+/* Compte à rebours */
+.countdown-screen {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  z-index: 860;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.countdown-number {
+  font-size: clamp(5rem, 20vw, 10rem);
+  font-weight: 700;
+  color: white;
+}
+
+/* Écran de transition */
+.transition-screen {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.85)), var(--steps-bg, url("")) no-repeat center center / cover;
+  z-index: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+.transition-container {
+  text-align: center;
+  max-width: 500px;
+}
+.transition-text {
+  font-size: 1.4rem;
+  color: white;
+  line-height: 1.8;
+  margin-bottom: 2rem;
+}
+.transition-prompt {
+  font-size: 1.1rem;
+  color: #ddd;
+  font-style: italic;
+  margin-bottom: 2.5rem;
+}
+
+/* Fonds personnalisés + zoom animation */
+body.custom-welcome-bg {
+  background-image: linear-gradient(rgba(0,0,0,0.16), rgba(0,0,0,0.34)), var(--welcome-bg) !important;
+}
+body.custom-steps-bg {
+  background-image: linear-gradient(rgba(0,0,0,0.16), rgba(0,0,0,0.34)), var(--steps-bg) !important;
+  animation: slowZoom 30s ease-in-out infinite alternate;
+}
+@keyframes slowZoom {
+  from { background-size: cover; }
+  to { background-size: 105% auto; }
+}
+
+/* Légendes des médias */
+.media-container figure {
+  margin: 1.5rem 0;
+}
+.media-container img,
+.media-container video {
+  width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+.media-container figcaption {
+  text-align: center;
+  color: #eee;
+  font-size: 0.95rem;
+  margin-top: 0.75rem;
+  font-style: italic;
+}
+
