@@ -666,27 +666,65 @@ function renderGenericStep(step) {
   stepTitle.textContent = step.title || "Un moment pour toi ❤️";
   stepBody.innerHTML = formatText(step.body_text || step.body || "");
   const stepMedia = getStepMedia(step.id);
-  for (const item of stepMedia) {
+    // Trier les médias par media_order
+  stepMedia.sort((a, b) => (a.media_order || 999) - (b.media_order || 999));
+  
+    for (const item of stepMedia) {
     if (!item.media_url) continue;
     const url = item.media_url;
+    
+    const figure = document.createElement("figure");
+    figure.style.margin = "1.5rem 0";
+    
     if (isImage(item)) {
       const img = document.createElement("img");
       img.src = url; img.alt = step.title || "Photo souvenir";
       img.loading = "lazy"; img.className = "memory-image";
-      mediaContainer.appendChild(img);
+      img.style.borderRadius = "12px";
+      figure.appendChild(img);
     } else if (isVideo(item)) {
       const video = document.createElement("video");
       video.src = url; video.controls = true; video.playsInline = true;
       video.preload = "metadata"; video.style.width = "100%";
-      mediaContainer.appendChild(video);
+      figure.appendChild(video);
     } else {
       const type = String(item.media_type || "").toLowerCase();
       if (type.includes("audio") || /\.(mp3|m4a|wav|ogg)(\?.*)?$/.test(url.toLowerCase())) {
         const audio = document.createElement("audio");
         audio.src = url; audio.controls = true; audio.preload = "metadata";
-        audio.style.width = "100%"; mediaContainer.appendChild(audio);
+        audio.style.width = "100%";
+        
+        audio.addEventListener("play", () => {
+          if (musicPlaying) {
+            musicWasPlaying = true;
+            backgroundMusic.pause();
+          }
+        });
+        audio.addEventListener("pause", () => {
+          if (musicWasPlaying) backgroundMusic.play();
+        });
+        audio.addEventListener("ended", () => {
+          if (musicWasPlaying) backgroundMusic.play();
+        });
+        
+        figure.appendChild(audio);
       }
     }
+    
+    if (item.caption) {
+      const caption = document.createElement("figcaption");
+      caption.textContent = item.caption;
+      caption.style.textAlign = "center";
+      caption.style.color = "#eee";
+      caption.style.fontSize = "0.95rem";
+      caption.style.marginTop = "0.75rem";
+      caption.style.fontStyle = "italic";
+      figure.appendChild(caption);
+    }
+    
+    mediaContainer.appendChild(figure);
+                               }
+  
   }
   const stepQuestions = getQuestionsForStep(step.id);
   if (stepQuestions.length) {
