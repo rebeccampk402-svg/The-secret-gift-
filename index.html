@@ -72,6 +72,26 @@
 
   <!-- Audio de l'étape 4 : Christina Perri — Human -->
   <audio id="christina-audio" controls preload="metadata"></audio>
+     <!-- Écrans personnalisés pour les autres surprises -->
+   <div id="intro-video-screen" class="video-screen hidden">
+     <video id="intro-video" playsinline class="full-video"></video>
+     <button id="skip-video" class="skip-btn">Passer l'intro →</button>
+   </div>
+
+   <div id="black-screen" class="black-screen hidden"></div>
+
+   <div id="countdown-screen" class="countdown-screen hidden">
+     <div id="countdown-number" class="countdown-number"></div>
+   </div>
+
+   <div id="transition-screen" class="transition-screen hidden">
+     <div class="transition-container">
+       <p id="transition-message" class="transition-text"></p>
+       <p id="transition-prompt" class="transition-prompt"></p>
+       <button id="transition-continue" class="continue-btn">Continuer ❤️</button>
+     </div>
+   </div>
+  
 
 
 <!-- Supabase JS doit être chargé AVANT app.js -->
