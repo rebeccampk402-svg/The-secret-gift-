@@ -56,7 +56,7 @@ let stepEightVideoIndex = 0;
 
 let pausedMusicTime = 0;
 let musicPlaying = false;
-let musicWasPlaying = false;
+
 
 
 // ============================================================
@@ -92,8 +92,7 @@ const backgroundMusic =
 
 const christinaAudio =
   document.getElementById("christina-audio");
-const christinaAudio =
-  document.getElementById("christina-audio");
+
 
 const introVideoScreen = document.getElementById('intro-video-screen');
 const introVideo = document.getElementById('intro-video');
