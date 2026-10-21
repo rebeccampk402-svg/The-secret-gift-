@@ -90,6 +90,18 @@ const backgroundMusic =
 
 const christinaAudio =
   document.getElementById("christina-audio");
+// Écrans personnalisés
+const introVideoScreen = document.getElementById('intro-video-screen');
+const introVideo = document.getElementById('intro-video');
+const skipVideoBtn = document.getElementById('skip-video');
+const blackScreen = document.getElementById('black-screen');
+const countdownScreen = document.getElementById('countdown-screen');
+const countdownNumber = document.getElementById('countdown-number');
+const transitionScreen = document.getElementById('transition-screen');
+const transitionMessageEl = document.getElementById('transition-message');
+const transitionPromptEl = document.getElementById('transition-prompt');
+const transitionContinueBtn = document.getElementById('transition-continue');
+
 
 
 // ============================================================
@@ -492,7 +504,8 @@ function showWelcome() {
     : `Une surprise pour ${recipient} ❤️`;
   welcomeText.textContent = isGardenSurprise
     ? "Une petite aventure t’attend… Prends ton temps, ouvre bien les yeux et profite de chaque étape. ❤️"
-    : (steps[0] && (steps[0].body_text || steps[0].body)) || "Une aventure t’attend… Ouvre bien les yeux et profite de chaque étape. ❤️";
+    : (surprise.welcome_message) ||
+    "Une aventure t’attend… Ouvre bien les yeux et profite de chaque étape. ❤️";
 
   startButton.textContent = "Commencer";
   startButton.disabled = false;
@@ -2240,6 +2253,113 @@ if (
 } else {
   initializeApp();
 }
+// ============================================================
+// ÉCRANS PERSONNALISÉS — Vidéo d'intro, compte à rebours, transitions
+// ============================================================
+
+function hideAllCustomScreens() {
+  introVideoScreen.classList.add('hidden');
+  blackScreen.classList.add('hidden');
+  countdownScreen.classList.add('hidden');
+  transitionScreen.classList.add('hidden');
+}
+
+async function showIntroVideo(videoUrl) {
+  return new Promise(async (resolve) => {
+    introVideo.src = videoUrl;
+    introVideoScreen.classList.remove('hidden');
+    skipVideoBtn.classList.remove('hidden');
+    
+    let ended = false;
+    const finish = () => {
+      if (ended) return;
+      ended = true;
+      introVideo.pause();
+      hideAllCustomScreens();
+      introVideo.removeEventListener('ended', finish);
+      skipVideoBtn.removeEventListener('click', finish);
+      resolve();
+    };
+    
+    introVideo.addEventListener('ended', finish);
+    skipVideoBtn.addEventListener('click', finish);
+    
+    try {
+      await introVideo.play();
+    } catch (e) {
+      finish();
+    }
+  });
+}
+
+async function showCountdown(enabled = true) {
+  return new Promise((resolve) => {
+    if (!enabled) { resolve(); return; }
+    
+    hideAllCustomScreens();
+    blackScreen.classList.remove('hidden');
+    
+    setTimeout(() => {
+      blackScreen.classList.add('hidden');
+      countdownScreen.classList.remove('hidden');
+      let count = 3;
+      countdownNumber.textContent = String(count);
+      
+      const interval = setInterval(() => {
+        count--;
+        if (count > 0) {
+          countdownNumber.textContent = String(count);
+        } else {
+          clearInterval(interval);
+          countdownScreen.classList.add('hidden');
+          resolve();
+        }
+      }, 800);
+    }, 500);
+  });
+}
+
+async function showTransition(message, prompt) {
+  return new Promise((resolve) => {
+    transitionMessageEl.textContent = message || '';
+    transitionPromptEl.textContent = prompt || '';
+    transitionScreen.classList.remove('hidden');
+    
+    const handleContinue = () => {
+      transitionContinueBtn.removeEventListener('click', handleContinue);
+      transitionScreen.classList.add('hidden');
+      resolve();
+    };
+    
+    transitionContinueBtn.addEventListener('click', handleContinue);
+  });
+}
+
+async function startCustomSequence() {
+  if (isGardenSurprise) return;
+  
+  hideAllCustomScreens();
+  
+  if (surprise.steps_background_url) {
+    document.body.style.backgroundImage = `url(${surprise.steps_background_url})`;
+    document.body.style.backgroundSize = 'cover';
+    document.body.style.backgroundPosition = 'center';
+    document.body.style.backgroundAttachment = 'fixed';
+  }
+  
+  if (surprise.custom_music_url && backgroundMusic) {
+    backgroundMusic.src = surprise.custom_music_url;
+    backgroundMusic.loop = true;
+    backgroundMusic.load();
+  }
+  
+  if (surprise.intro_video_url) {
+    await showIntroVideo(surprise.intro_video_url);
+  }
+  
+  await showCountdown(surprise.countdown_enabled);
+    }
+
 
 
 // ============================================================
