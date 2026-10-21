@@ -104,7 +104,8 @@ const transitionScreen = document.getElementById('transition-screen');
 const transitionMessageEl = document.getElementById('transition-message');
 const transitionPromptEl = document.getElementById('transition-prompt');
 const transitionContinueBtn = document.getElementById('transition-continue');
-const stepAudioPlayer = document.getElementById('step-audio-player');
+
+//const stepAudioPlayer = document.getElementById('step-audio-player');
 
 let musicWasPlaying = false;
 
@@ -724,9 +725,8 @@ function renderGenericStep(step) {
     }
     
     mediaContainer.appendChild(figure);
-                               }
+                               
   
-  }
   const stepQuestions = getQuestionsForStep(step.id);
   if (stepQuestions.length) {
     const question = stepQuestions[0];
