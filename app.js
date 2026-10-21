@@ -541,10 +541,18 @@ if (startButton) {
       stepTwoQuestionIndex = -2;
       stepEightVideoIndex = 0;
 
-      welcomeScreen.classList.add("hidden");
+            welcomeScreen.classList.add("hidden");
+      
+      // Lancer la séquence personnalisée pour les autres surprises
+      if (!isGardenSurprise) {
+        await startCustomSequence();
+      } else {
+        startBackgroundMusic();
+      }
+      
       surpriseScreen.classList.remove("hidden");
-      startBackgroundMusic();
       await renderCurrentStep();
+      
     } catch (error) {
       console.error("Échec du démarrage de la surprise :", error);
       showError("Le chargement n’a pas abouti. Vérifie ta connexion puis appuie sur « Réessayer ».");
