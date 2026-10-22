@@ -670,28 +670,78 @@ function renderGenericStep(step) {
   stepTitle.textContent = step.title || "Un moment pour toi ❤️";
   stepBody.innerHTML = formatText(step.body_text || step.body || "");
   const stepMedia = getStepMedia(step.id);
-  for (const item of stepMedia) {
-    if (!item.media_url) continue;
-    const url = item.media_url;
-    if (isImage(item)) {
-      const img = document.createElement("img");
-      img.src = url; img.alt = step.title || "Photo souvenir";
-      img.loading = "lazy"; img.className = "memory-image";
-      mediaContainer.appendChild(img);
-    } else if (isVideo(item)) {
-      const video = document.createElement("video");
-      video.src = url; video.controls = true; video.playsInline = true;
-      video.preload = "metadata"; video.style.width = "100%";
-      mediaContainer.appendChild(video);
-    } else {
-      const type = String(item.media_type || "").toLowerCase();
-      if (type.includes("audio") || /\.(mp3|m4a|wav|ogg)(\?.*)?$/.test(url.toLowerCase())) {
-        const audio = document.createElement("audio");
-        audio.src = url; audio.controls = true; audio.preload = "metadata";
-        audio.style.width = "100%"; mediaContainer.appendChild(audio);
-      }
+  // Trier les médias par ordre
+stepMedia.sort((a, b) => (a.media_order || 999) - (b.media_order || 999));
+
+for (const item of stepMedia) {
+  if (!item.media_url) continue;
+  const url = item.media_url;
+  
+  const figure = document.createElement("figure");
+  figure.style.margin = "1.5rem 0";
+  
+  if (isImage(item)) {
+    const img = document.createElement("img");
+    img.src = url;
+    img.alt = step.title || "Photo souvenir";
+    img.loading = "lazy";
+    img.className = "memory-image";
+    img.style.borderRadius = "12px";
+    figure.appendChild(img);
+  } 
+  else if (isVideo(item)) {
+    const video = document.createElement("video");
+    video.src = url;
+    video.controls = true;
+    video.playsInline = true;
+    video.preload = "metadata";
+    video.style.width = "100%";
+    figure.appendChild(video);
+  } 
+  else {
+    const type = String(item.media_type || "").toLowerCase();
+    if (type.includes("audio") || /\.(mp3|m4a|wav|ogg)(\?.*)?$/.test(url.toLowerCase())) {
+      const audio = document.createElement("audio");
+      audio.src = url;
+      audio.controls = true;
+      audio.preload = "metadata";
+      audio.style.width = "100%";
+      
+      audio.addEventListener("play", () => {
+        if (backgroundMusic && !backgroundMusic.paused) {
+          musicWasPlaying = true;
+          backgroundMusic.pause();
+        }
+      });
+      audio.addEventListener("pause", () => {
+        if (musicWasPlaying && backgroundMusic) {
+          backgroundMusic.play();
+        }
+      });
+      audio.addEventListener("ended", () => {
+        if (musicWasPlaying && backgroundMusic) {
+          backgroundMusic.play();
+        }
+      });
+      
+      figure.appendChild(audio);
     }
   }
+  
+  if (item.caption) {
+    const captionEl = document.createElement("figcaption");
+    captionEl.textContent = item.caption;
+    captionEl.style.textAlign = "center";
+    captionEl.style.color = "#eee";
+    captionEl.style.fontSize = "0.95rem";
+    captionEl.style.marginTop = "0.75rem";
+    captionEl.style.fontStyle = "italic";
+    figure.appendChild(captionEl);
+  }
+  
+  mediaContainer.appendChild(figure);
+}
+  
   const stepQuestions = getQuestionsForStep(step.id);
   if (stepQuestions.length) {
     const question = stepQuestions[0];
@@ -736,6 +786,13 @@ async function goToNextStep() {
   }
 
   await saveProgress();
+    // Afficher l'écran de transition si ce n'est pas Garden et qu'il y a un message
+  if (!isGardenSurprise && steps[currentStepIndex].transition_message) {
+    await showTransition(
+      steps[currentStepIndex].transition_message,
+      steps[currentStepIndex].transition_prompt
+    );
+  }
   await renderCurrentStep();
 
   window.scrollTo({
