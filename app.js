@@ -2291,6 +2291,7 @@ async function initializeApp() {
       }
     );
 
+
   } catch (error) {
     console.error(
       "Erreur de chargement :",
@@ -2298,10 +2299,10 @@ async function initializeApp() {
     );
 
     showError(
-      "Impossible de charger la surprise pour le moment. Vérifie ta connexion puis réessaie."
+      "Détail de l'erreur : " +
+      (error?.message || String(error))
     );
   }
-}
 
 
 // ============================================================
