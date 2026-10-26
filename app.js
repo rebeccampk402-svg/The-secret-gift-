@@ -317,6 +317,9 @@ async function loadSurprise() {
   const { data, error } = await query.maybeSingle();
   if (error) throw error;
   if (!data) throw new Error("Cette surprise est introuvable. Vérifie le lien reçu.");
+  if (requestedToken && data.recipient_token !== requestedToken) {
+  throw new Error("Le jeton du lien ne correspond pas à celui de la surprise.");
+  }
   surprise = data;
   activeSurpriseId = data.id;
   isGardenSurprise = data.id === GARDEN_SURPRISE_ID || data.recipient_token === GARDEN_TOKEN;
