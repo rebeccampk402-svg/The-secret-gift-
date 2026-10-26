@@ -498,20 +498,26 @@ function showWelcome() {
   welcomeScreen.classList.remove("hidden");
   surpriseScreen.classList.add("hidden");
 
-  const recipient = surprise && surprise.recipient_name ? surprise.recipient_name : "toi";
-  welcomeTitle.textContent = isGardenSurprise
-    ? "Bienvenue dans ta surprise ❤️"
-    : `Une surprise pour ${recipient} ❤️`;
-  welcomeText.textContent = isGardenSurprise
-    ? "Une petite aventure t’attend… Prends ton temps, ouvre bien les yeux et profite de chaque étape. ❤️"
-    : (surprise.welcome_message) ||
-    "Une aventure t’attend… Ouvre bien les yeux et profite de chaque étape. ❤️";
+  const recipient =
+    surprise && surprise.recipient_name
+      ? surprise.recipient_name
+      : "toi";
+
+  welcomeTitle.textContent =
+    isGardenSurprise
+      ? "Bienvenue dans ta surprise ❤️"
+      : `Une surprise pour ${recipient} ❤️`;
+
+  welcomeText.textContent =
+    isGardenSurprise
+      ? "Une petite aventure t’attend… Prends ton temps, ouvre bien les yeux et profite de chaque étape. ❤️"
+      : (surprise && surprise.welcome_message)
+        || "Une aventure t’attend… Ouvre bien les yeux et profite de chaque étape. ❤️";
 
   startButton.textContent = "Commencer";
   startButton.disabled = false;
   startButton.classList.remove("hidden");
 }
-
 
 // ============================================================
 // BOUTON COMMENCER
