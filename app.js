@@ -340,12 +340,6 @@ async function loadSteps() {
   }steps = data || [];
 totalSteps = steps.length;
 
-if (totalSteps === 0) {
-  throw new Error(
-    "Cette surprise ne contient aucune étape. Vérifie sa configuration avant d'envoyer le lien."
-  );
-}
-
 
 async function loadQuestions() {
   if (!steps.length) {
