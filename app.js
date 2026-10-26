@@ -561,7 +561,7 @@ if (startButton) {
       
     } catch (error) {
       console.error("Échec du démarrage de la surprise :", error);
-      showError("Le chargement n’a pas abouti. Vérifie ta connexion puis appuie sur « Réessayer ».");
+      showError("Erreur détectée : " + (error?.message || String(error)));
     } finally {
       isStarting = false;
       if (startButton) startButton.disabled = false;
