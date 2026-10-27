@@ -2405,25 +2405,39 @@ async function startCustomSequence() {
   
   hideAllCustomScreens();
   
-  if (surprise.steps_background_url) {
-    document.body.style.backgroundImage = `url(${surprise.steps_background_url})`;
-    document.body.style.backgroundSize = 'cover';
-    document.body.style.backgroundPosition = 'center';
-    document.body.style.backgroundAttachment = 'fixed';
-  }
-  
-  if (surprise.custom_music_url && backgroundMusic) {
-    backgroundMusic.src = surprise.custom_music_url;
-    backgroundMusic.loop = true;
-    backgroundMusic.load();
-  }
-  
+  // 1️⃣ Vidéo d'introduction
   if (surprise.intro_video_url) {
     await showIntroVideo(surprise.intro_video_url);
   }
   
+  // 2️⃣ Compte à rebours
   await showCountdown(surprise.countdown_enabled);
+  
+  // 3️⃣ Fond personnalisé de la PAGE D'ACCUEIL
+  if (surprise.welcome_background_url) {
+    welcomeScreen.style.backgroundImage = `url(${surprise.welcome_background_url})`;
+    welcomeScreen.style.backgroundSize = 'cover';
+    welcomeScreen.style.backgroundPosition = 'center';
+  }
+  
+  // 4️⃣ Musique personnalisée
+  if (surprise.custom_music_url && backgroundMusic) {
+    backgroundMusic.src = surprise.custom_music_url;
+    backgroundMusic.loop = true;
+    backgroundMusic.load();
+    try {
+      await backgroundMusic.play();
+    } catch (e) {
+      console.warn("Lecture musique bloquée :", e);
     }
+  }
+  
+  // 5️⃣ Afficher la page d'accueil avec le message de bienvenue
+  showWelcome();
+  
+  return;
+}
+
 
 
 
