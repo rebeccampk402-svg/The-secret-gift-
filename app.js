@@ -2405,22 +2405,7 @@ async function startCustomSequence() {
   
   hideAllCustomScreens();
   
-  // 1️⃣ Vidéo d'introduction
-  if (surprise.intro_video_url) {
-    await showIntroVideo(surprise.intro_video_url);
-  }
-  
-  // 2️⃣ Compte à rebours
-  await showCountdown(surprise.countdown_enabled);
-  
-  // 3️⃣ Fond personnalisé de la PAGE D'ACCUEIL
-  if (surprise.welcome_background_url) {
-    welcomeScreen.style.backgroundImage = `url(${surprise.welcome_background_url})`;
-    welcomeScreen.style.backgroundSize = 'cover';
-    welcomeScreen.style.backgroundPosition = 'center';
-  }
-  
-  // 4️⃣ Musique personnalisée
+  // 1. Musique D'ABORD — elle joue pendant la vidéo
   if (surprise.custom_music_url && backgroundMusic) {
     backgroundMusic.src = surprise.custom_music_url;
     backgroundMusic.loop = true;
@@ -2428,12 +2413,36 @@ async function startCustomSequence() {
     try {
       await backgroundMusic.play();
     } catch (e) {
-      console.warn("Lecture musique bloquée :", e);
+      console.warn("Musique bloquée :", e);
     }
   }
   
-  // 5️⃣ Afficher la page d'accueil avec le message de bienvenue
-  showWelcome();
+  // 2. Vidéo d'introduction
+  if (surprise.intro_video_url) {
+    await showIntroVideo(surprise.intro_video_url);
+  }
+  
+  // 3. Compte à rebours
+  await showCountdown(surprise.countdown_enabled);
+  
+  // 4. Fond personnalisé de la page d'accueil
+  if (surprise.welcome_background_url) {
+    welcomeScreen.style.backgroundImage = `url(${surprise.welcome_background_url})`;
+    welcomeScreen.style.backgroundSize = 'cover';
+    welcomeScreen.style.backgroundPosition = 'center';
+  }
+  
+  // 5. Afficher le BON message personnalisé
+  welcomeScreen.classList.remove("hidden");
+  surpriseScreen.classList.add("hidden");
+  
+  const recipient = surprise.recipient_name || "toi";
+  welcomeTitle.textContent = `Une surprise pour ${recipient} ❤️`;
+  welcomeText.textContent = surprise.welcome_message || "Une aventure t'attend… ❤️";
+  
+  startButton.textContent = "Commencer";
+  startButton.classList.remove("hidden");
+  startButton.disabled = false;
   
   return;
 }
