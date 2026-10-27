@@ -542,13 +542,15 @@ if (startButton) {
       stepEightVideoIndex = 0;
 
             welcomeScreen.classList.add("hidden");
+  // Pour les autres surprises : directement aux étapes, pas de nouvelle vidéo
+if (!isGardenSurprise) {
+  welcomeScreen.classList.add("hidden");
+  surpriseScreen.classList.remove("hidden");
+  renderCurrentStep();
+} else {
+  startBackgroundMusic();
+}
       
-      // Lancer la séquence personnalisée pour les autres surprises
-      if (!isGardenSurprise) {
-        await startCustomSequence();
-      } else {
-        startBackgroundMusic();
-      }
       
       surpriseScreen.classList.remove("hidden");
       await renderCurrentStep();
