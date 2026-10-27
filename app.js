@@ -544,8 +544,7 @@ if (startButton) {
             welcomeScreen.classList.add("hidden");
       
       // Lancer la séquence personnalisée pour les autres surprises
-      if (!isGardenSurprise) {
-        await startCustomSequence();
+      if (!isGardenSurprise) 
       } else {
         startBackgroundMusic();
       }
@@ -2404,7 +2403,15 @@ async function startCustomSequence() {
   
   hideAllCustomScreens();
   
-  // Fond personnalisé
+  // 1️⃣ Vidéo d'introduction
+  if (surprise.intro_video_url) {
+    await showIntroVideo(surprise.intro_video_url);
+  }
+  
+  // 2️⃣ Compte à rebours
+  await showCountdown(surprise.countdown_enabled);
+  
+  // 3️⃣ Fond personnalisé
   if (surprise.steps_background_url) {
     document.body.style.backgroundImage = `url(${surprise.steps_background_url})`;
     document.body.style.backgroundSize = 'cover';
@@ -2412,7 +2419,7 @@ async function startCustomSequence() {
     document.body.style.backgroundAttachment = 'fixed';
   }
   
-  // Musique personnalisée — configurée ET démarrée
+  // 4️⃣ Musique personnalisée
   if (surprise.custom_music_url && backgroundMusic) {
     backgroundMusic.src = surprise.custom_music_url;
     backgroundMusic.loop = true;
@@ -2424,18 +2431,13 @@ async function startCustomSequence() {
     }
   }
   
-  // Vidéo d'introduction
-  if (surprise.intro_video_url) {
-    await showIntroVideo(surprise.intro_video_url);
-  }
-  
-  // Compte à rebours
-  await showCountdown(surprise.countdown_enabled);
-  
-  // ✅ Retour à l'écran d'accueil personnalisé
+  // 5️⃣ AFFICHER LA PAGE D'ACCUEIL PERSONNALISÉE
   showWelcome();
+  
+  // ⚠️ Important : on s'arrête là, on attend que l'utilisateur clique sur Commencer
   return;
 }
+
 
 
 // ============================================================
