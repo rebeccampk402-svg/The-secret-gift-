@@ -2399,12 +2399,12 @@ async function showTransition(message, prompt) {
     transitionContinueBtn.addEventListener('click', handleContinue);
   });
 }
-
 async function startCustomSequence() {
   if (isGardenSurprise) return;
   
   hideAllCustomScreens();
   
+  // Fond personnalisé
   if (surprise.steps_background_url) {
     document.body.style.backgroundImage = `url(${surprise.steps_background_url})`;
     document.body.style.backgroundSize = 'cover';
@@ -2412,19 +2412,30 @@ async function startCustomSequence() {
     document.body.style.backgroundAttachment = 'fixed';
   }
   
+  // Musique personnalisée — configurée ET démarrée
   if (surprise.custom_music_url && backgroundMusic) {
     backgroundMusic.src = surprise.custom_music_url;
     backgroundMusic.loop = true;
     backgroundMusic.load();
+    try {
+      await backgroundMusic.play();
+    } catch (e) {
+      console.warn("Lecture musique bloquée :", e);
+    }
   }
   
+  // Vidéo d'introduction
   if (surprise.intro_video_url) {
     await showIntroVideo(surprise.intro_video_url);
   }
   
+  // Compte à rebours
   await showCountdown(surprise.countdown_enabled);
-    }
-
+  
+  // ✅ Retour à l'écran d'accueil personnalisé
+  showWelcome();
+  return;
+}
 
 
 // ============================================================
